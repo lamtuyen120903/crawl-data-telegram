@@ -87,7 +87,7 @@ async def crawl_channels(keywords: str, days: int = 10, limit_per_keyword: int =
         
         # --- Process each channel ---
         batch_results = []
-        cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
+        cutoff_date = datetime.now(timezone.utc) - timedelta(days=int(days))
         
         for username in all_usernames:
             try:
