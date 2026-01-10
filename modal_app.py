@@ -71,10 +71,11 @@ async def crawl_channels(keywords: str, days: int = 10, limit_per_keyword: int =
                 for chat in result.chats:
                     if isinstance(chat, Channel) and chat.username:
                         all_usernames.add(chat.username)
-                        if len(all_usernames) >= limit_per_keyword:
-                            break
             except Exception as e:
                 print(f"Search error for '{kw}': {e}")
+        
+        # Limit the total channels to process
+        all_usernames = list(all_usernames)[:int(limit_per_keyword)]
         
         if not all_usernames:
             return {
