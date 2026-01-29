@@ -13,7 +13,7 @@ from telethon.tl.types import Channel
 app = modal.App("telegram-crawler")
 
 # Volume for persistent Telegram session storage
-session_volume = modal.Volume.from_name("telegram-session", create_if_missing=True)
+session_volume = modal.Volume.from_name("telegram-session-search", create_if_missing=True)
 
 # Docker image with required dependencies
 image = modal.Image.debian_slim(python_version="3.11").pip_install(
@@ -51,7 +51,7 @@ async def crawl_channels(keywords: str, days: int = 10, limit_per_keyword: int =
     """Main function to search, get info, and crawl channels."""
     api_id = int(os.environ["API_ID"])
     api_hash = os.environ["API_HASH"]
-    session_path = "/session/telegram_session"
+    session_path = "/session/session_search"
     
     client = TelegramClient(session_path, api_id, api_hash)
     
@@ -206,7 +206,7 @@ async def crawl_channels(keywords: str, days: int = 10, limit_per_keyword: int =
 )
 async def upload_session(session_data: bytes):
     """Upload session file to Modal volume."""
-    session_path = "/session/telegram_session.session"
+    session_path = "/session/session_search.session"
     with open(session_path, "wb") as f:
         f.write(session_data)
     session_volume.commit()
@@ -239,7 +239,7 @@ def main():
     print("=== Telegram Session Creator ===")
     print("This will create a session locally and upload it to Modal.\n")
     
-    local_session_path = "modal_telegram_session"
+    local_session_path = "session_search"
     
     async def create_and_upload():
         client = TelegramClient(local_session_path, API_ID, API_HASH)
