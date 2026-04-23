@@ -345,6 +345,10 @@ Google Sheets - Append or update
 - Date Created, Summary, Quantity
 - Reaction, Frequency, View
 - Mention, Subscribers
+<img width="946" height="569" alt="Screenshot 2026-04-23 at 14 31 32" src="https://github.com/user-attachments/assets/a1e38d8d-6c0f-4391-8c90-8a8d6029ce10" />
+<img width="1127" height="548" alt="Screenshot 2026-04-23 at 14 31 43" src="https://github.com/user-attachments/assets/bf743390-d705-47ec-b9a5-1e2a38755a6a" />
+<img width="796" height="555" alt="Screenshot 2026-04-23 at 14 32 01" src="https://github.com/user-attachments/assets/29202e61-6e59-47a3-875c-6c00807e4d47" />
+
 
 ---
 
