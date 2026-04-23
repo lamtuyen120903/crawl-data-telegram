@@ -47,7 +47,7 @@ class DateTimeEncoder(json.JSONEncoder):
     volumes={"/session": session_volume},
     timeout=600,
 )
-async def crawl_channel_by_link(link: str, days: int = 30):
+async def crawl_channel_by_link(link: str, days: int = 30, download_media: bool = False):
     """Crawl a specific channel by its link or username."""
     api_id = int(os.environ["API_ID"])
     api_hash = os.environ["API_HASH"]
@@ -97,6 +97,11 @@ async def crawl_channel_by_link(link: str, days: int = 30):
             all_items = []
             offset_id = 0
             
+            # Prepare media directory if downloading
+            if download_media:
+                media_base_path = f"/session/media/{chat_info.username}"
+                os.makedirs(media_base_path, exist_ok=True)
+            
             while True:
                 history = await client(GetHistoryRequest(
                     peer=entity,
@@ -130,8 +135,21 @@ async def crawl_channel_by_link(link: str, days: int = 30):
                     
                     message_link = f"https://t.me/{chat_info.username}/{msg.id}"
                     image_links = []
+                    local_media_path = None
+                    
                     if msg.photo:
                         image_links.append(message_link)
+
+                    if download_media and (msg.photo or msg.file):
+                         try:
+                            # Create a unique filename based on message ID
+                            file_name = f"{msg.id}"
+                            # Start download
+                            downloaded_path = await client.download_media(msg, file=os.path.join(media_base_path, file_name))
+                            if downloaded_path:
+                                local_media_path = downloaded_path
+                         except Exception as e:
+                             print(f"Failed to download media for message {msg.id}: {e}")
 
                     all_items.append({
                         "channel": chat_info.username,
@@ -143,7 +161,8 @@ async def crawl_channel_by_link(link: str, days: int = 30):
                         "replies": msg.replies.replies if msg.replies else 0,
                         "reaction_total": sum(r["count"] for r in reactions),
                         "message_link": message_link,
-                        "image_links": image_links
+                        "image_links": image_links,
+                        "local_media_path": local_media_path
                     })
                 
                 if offset_id is None:
@@ -202,10 +221,11 @@ async def upload_session(session_data: bytes):
 )
 @modal.fastapi_endpoint(method="POST")
 async def crawl(request: dict):
-    """Web endpoint for crawling a single channel by link."""
+    """Web endpoint for crawling a specific channel by link."""
     link = request.get("link")
     days_input = request.get("days")
-    
+    download_media = request.get("download_media", False)
+
     # Validate 'days'
     try:
         if days_input is None or days_input == "":
@@ -218,7 +238,7 @@ async def crawl(request: dict):
     if not link:
         return {"error": "Missing 'link' parameter"}
     
-    result = await crawl_channel_by_link.remote.aio(link=link, days=days)
+    result = await crawl_channel_by_link.remote.aio(link=link, days=days, download_media=download_media)
     return result
 
 
