@@ -1,67 +1,77 @@
-# BD_Bingx - Telegram Crawler & Analytics
+# Crawl Data Telegram
 
-Crawl và phân tích dữ liệu Telegram bằng Modal (serverless Python platform).
+Tool crawl dữ liệu từ Telegram bằng Modal (serverless platform).
 
-## Tính năng
+## Cái gì?
 
-### `modal_crawler_by_link.py`
-- Crawl tin nhắn từ một channel/groups qua link hoặc username
-- Thu thập: tin nhắn, reactions, views, forwards, replies
-- Hỗ trợ download media (ảnh, file)
-- Lọc theo ngày (mặc định 30 ngày)
-- Web endpoint: `POST /crawl`
+Dự án này giúp bạn:
 
-### `modal_user_message.py`
-- Phân tích group: danh sách admin, ranking user, top tin nhắn
-- Thống kê chi tiết per user
-- Web endpoint: `POST /analyze`
+- **Thu thập tin nhắn** từ bất kỳ Telegram channel/group nào
+- **Phân tích user** trong group: ai hoạt động nhiều nhất, ai là admin
+- **Lưu trữ & xem lại** dữ liệu sau này
 
-## Cài đặt
+## Cách hoạt động
+
+```
+Telegram → Modal (Python) → API response
+```
+
+Code chạy trên Modal (serverless), không cần VPS/server riêng.
+
+## Bắt đầu
+
+### 1. Cài đặt
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Chạy local
+### 2. Cấu hình Telegram API
+
+Tạo secret trên Modal:
+```bash
+modal secret create telegram-secrets
+# Thêm API_ID và API_HASH từ my.telegram.org
+```
+
+### 3. Deploy
 
 ```bash
-# Tạo session Telegram
-python modal_crawler_by_link.py
-
-# Deploy lên Modal
 modal deploy modal_crawler_by_link.py
 modal deploy modal_user_message.py
 ```
 
-## API Endpoints
+## Ví dụ sử dụng
 
-### Crawl by Link
+### Crawl tin nhắn từ channel
+
 ```bash
 curl -X POST https://your-app.modal.app/crawl \
   -H "Content-Type: application/json" \
-  -d '{"link": "https://t.me/channel_name", "days": 30, "download_media": false}'
+  -d '{"link": "https://t.me/channel_name", "days": 30}'
 ```
 
-### User Analytics
+### Phân tích group
+
 ```bash
 curl -X POST https://your-app.modal.app/analyze \
   -H "Content-Type: application/json" \
   -d '{"group_link": "https://t.me/group_name", "days": 30}'
 ```
 
-## Secrets cần thiết
+## Các file chính
 
-Tạo Modal secret `telegram-secrets` với:
-- `API_ID`: Telegram API ID
-- `API_HASH`: Telegram API Hash
+| File | Mô tả |
+|------|-------|
+| `modal_crawler_by_link.py` | Crawl tin nhắn từ channel/group qua link |
+| `modal_user_message.py` | Phân tích user & thống kê group |
 
-## Volume
-
-- `telegram-session-link`: Lưu session Telegram (crawler by link)
-- `telegram-session-analytics`: Lưu session Telegram (analytics)
-
-## Yêu cầu
+## Requirements
 
 - Python 3.11+
-- Modal account & CLI
-- Telegram API credentials
+- Modal account
+- Telegram API (lấy từ my.telegram.org)
+
+---
+
+Made with Modal + Telethon
