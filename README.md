@@ -186,6 +186,7 @@ Project này đi kèm với **4 N8N workflows** giúp kết nối crawl-data-tel
 | `Crawl Channel BD` | Crawl data channel + phân tích nội dung bằng AI (Summary, Mention, Spam, Referral link) |
 | `Ana Channel` | Phân tích chi tiết một channel: thông tin, reactions, views, subscribers |
 | `Crawl Group BD_ tele bot` | Telegram bot nhận lệnh và trả về thông tin group: admins, user ranking, top messages |
+| `Crawl Group` | Crawl channels theo keyword (Gemini generate 10 keywords VN+ID), phân tích nội dung bằng AI, lưu vào Google Sheets |
 
 ---
 
@@ -309,6 +310,41 @@ Send Telegram messages (gửi kết quả về cho user)
 https://web.telegram.org/k/#@crawlgroup_bot
 
 ![Telegram Bot Interface](images/tele_bot.png)
+
+---
+
+### 5. Crawl Group
+
+**Mục đích:** Crawl channels theo keyword, Gemini AI generate 10 từ khóa (5 Việt Nam + 5 Indonesia), phân tích nội dung bằng AI và lưu vào Google Sheets.
+
+**Flow hoạt động:**
+
+```
+Manual Trigger
+    ↓
+Google Sheets - Data (đọc dữ liệu)
+    ↓
+Google Sheets - Keyword (lấy từ khóa chính)
+    ↓
+Gemini AI (generate 10 từ khóa: 5 VN + 5 ID)
+    ↓
+HTTP Request → Modal API (crawl channels)
+    ↓
+Split Out (tách data)
+    ↓
+Loop Over Items (duyệt từng channel)
+    ↓
+Information Extractor (AI phân tích)
+    ↓
+Google Sheets - Append or update
+```
+
+**Input:** Từ khóa từ sheet "Keyword"
+**Output:**
+- ID, Platform, Name, Link
+- Date Created, Summary, Quantity
+- Reaction, Frequency, View
+- Mention, Subscribers
 
 ---
 
