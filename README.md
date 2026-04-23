@@ -81,9 +81,54 @@ curl -X POST https://your-app.modal.app/analyze \
 
 | File | Mô tả |
 |------|-------|
-| `modal_crawler_by_link.py` | Crawl tin nhắn từ channel/group. Ví dụ: lấy 30 ngày tin nhắn từ một channel Telegram |
+| `modal_app.py` | **Tìm kiếm channels bằng keyword** - Tự động tìm kiếm Telegram channels theo từ khóa (VD: "crypto signals"), sau đó crawl tất cả channels tìm được |
+| `modal_crawler_by_link.py` | Crawl tin nhắn từ một channel/group cụ thể qua link. Ví dụ: lấy 30 ngày tin nhắn từ một channel Telegram |
 | `modal_user_message.py` | Phân tích user trong group. Ví dụ: biết ai là admin, ai gửi nhiều tin nhắn nhất, thống kê reactions |
 | `requirements.txt` | Danh sách thư viện cần cài (modal, telethon, cryptg) |
+
+---
+
+## Cách hoạt động
+
+### modal_app.py - Tìm kiếm channel bằng keyword
+
+```
+Input: keywords = "crypto signals, airdrop"
+    ↓
+Telethon SearchRequest (tìm channels có chứa keyword)
+    ↓
+Thu thập danh sách usernames (tối đa 100/channel)
+    ↓
+Crawl tin nhắn từ tất cả channels tìm được
+    ↓
+Output: Danh sách channels + tin nhắn
+```
+
+### modal_crawler_by_link.py - Crawl một channel cụ thể
+
+```
+Input: link = "https://t.me/channel_name"
+    ↓
+Truy cập channel qua username/link
+    ↓
+Crawl toàn bộ tin nhắn (lọc theo ngày)
+    ↓
+Output: Chi tiết channel + danh sách tin nhắn
+```
+
+### modal_user_message.py - Phân tích group
+
+```
+Input: group_link = "https://t.me/group_name"
+    ↓
+Lấy danh sách admins
+    ↓
+Ranking users theo số tin nhắn
+    ↓
+Thu thập top messages
+    ↓
+Output: Admins, User ranking, Top messages
+```
 
 ## Ví dụ kết quả
 
@@ -129,12 +174,156 @@ curl -X POST https://your-app.modal.app/analyze \
 }
 ```
 
+## N8N Workflows
+
+Project này đi kèm với **4 N8N workflows** giúp kết nối crawl-data-telegram với các dịch vụ khác như Google Sheets, Telegram Bot, và Gemini AI.
+
+### Tổng quan Workflows
+
+| Workflow | Mô tả |
+|----------|-------|
+| `Crawl channel - combine` | Crawl nhiều channels cùng lúc theo keyword, kết hợp với Gemini AI để generate thêm từ khóa |
+| `Crawl Channel BD` | Crawl data channel + phân tích nội dung bằng AI (Summary, Mention, Spam, Referral link) |
+| `Ana Channel` | Phân tích chi tiết một channel: thông tin, reactions, views, subscribers |
+| `Crawl Group BD_ tele bot` | Telegram bot nhận lệnh và trả về thông tin group: admins, user ranking, top messages |
+
+---
+
+### 1. Crawl channel - combine
+
+**Mục đích:** Crawl nhiều channels cùng lúc dựa trên danh sách từ khóa, tự động generate thêm từ khóa liên quan bằng Gemini AI.
+
+**Flow hoạt động:**
+```
+Webhook (nhận keyword từ user)
+    ↓
+Google Sheets (đọc danh sách từ khóa cần loại trừ)
+    ↓
+Gemini AI (generate 5-10 từ khóa liên quan: crypto signals, airdrop, trading...)
+    ↓
+HTTP Request → Modal API (crawl channels theo từ khóa)
+    ↓
+Google Sheets (lưu kết quả vào Output_Data)
+```
+
+**Input:** `POST /crawl-keyword-tele` với body chứa keyword chính
+**Output:** Kết quả crawl được lưu vào Google Sheets
+
+---
+
+### 2. Crawl Channel BD
+
+**Mục đích:** Crawl data từ một hoặc nhiều channels, sau đó phân tích nội dung bằng AI để trích xuất thông tin quan trọng.
+
+**Flow hoạt động:**
+```
+Google Sheets (đọc danh sách channels cần crawl)
+    ↓
+Loop Over Items (duyệt từng channel)
+    ↓
+HTTP Request → Modal API (crawl messages)
+    ↓
+Information Extractor (Gemini AI phân tích):
+    - Summary: Tóm tắt nội dung channel
+    - Mention: Exchange nào được nhắc đến (BingX, Binance, Bybit...)
+    - Spam: Đếm số tin nhắn spam/không liên quan
+    - Referral link: Tìm link referral trong messages
+    - Language: Ngôn ngữ của channel
+    ↓
+Google Sheets (lưu kết quả phân tích)
+```
+
+**Input:** Google Sheets chứa danh sách channels (Dãy từ khoá)
+**Output:**
+- ID, Name, Link, Date Created
+- Summary, Spam, Subscribers, Frequency
+- Reaction, View, Mention, Referral link
+
+---
+
+### 3. Ana Channel
+
+**Mục đích:** Phân tích chi tiết một channel cụ thể: thông tin cơ bản, thống kê reactions/views, và nội dung.
+
+**Flow hoạt động:**
+```
+Google Sheets (lấy Username_Channel và Days từ input)
+    ↓
+HTTP Request → Modal API (crawl channel)
+    ↓
+Information Extractor (AI phân tích):
+    - Mention: Exchange được nhắc đến
+    - Spam: Tin nhắn spam
+    - Referral link: Link referral
+    - Referral BingX or not: Có link BingX referral không
+    - Language: Ngôn ngữ
+    - Summary: Tóm tắt nội dung
+    ↓
+Google Sheets (cập nhật vào Outpu_ChannelDatabylink)
+```
+
+**Input:** `Username_Channel` + `Days` từ Google Sheets
+**Output:**
+- ID, Platform, Name, Link
+- Date Created, Reaction, Frequency, View
+- Mention, Subscribers, Date chạy, Spam
+- Referral link, Referral BingX or not, Language, Summary
+
+---
+
+### 4. Crawl Group BD_ tele bot
+
+**Mục đích:** Telegram bot cho phép user nhắn lệnh để phân tích một group: xem admins, user ranking, top messages.
+
+**Flow hoạt động:**
+```
+Telegram Trigger (nhận tin nhắn từ user)
+    ↓
+HTTP Request → Modal API (phân tích group)
+    ↓
+Code (xử lý dữ liệu):
+    - Tách danh sách Admins
+    - Chia user ranking thành chunks (mỗi chunk 23 users)
+    - Tách top messages
+    ↓
+Loop Over Items (duyệt từng user)
+    ↓
+Information Extractor (AI phân tích hành vi user: Whale hay không, losses/gains)
+    ↓
+Send Telegram messages (gửi kết quả về cho user)
+```
+
+**Tính năng:**
+- Nhận lệnh từ Telegram, phân tích ngay lập tức
+- Gửi lại kết quả vào Telegram:
+  - Danh sách Admins
+  - User ranking (chia nhỏ mỗi 23 users)
+  - Phân tích Whale behavior cho từng user
+- Phân tích message content để xác định Whale
+
+---
+
+### Cách import workflows vào N8N
+
+1. Mở N8N → Click **Workflows** → **Import from File**
+2. Chọn file JSON tương ứng trong folder `N8N-BingX-crawl-telegram/`
+3. Cấu hình credentials:
+   - **Google Sheets**: OAuth2 API
+   - **Telegram API**: Bot Token
+   - **Google Gemini**: API key cho AI features
+4. Activate workflow
+
+---
+
 ## Requirements
 
 - Python 3.11 trở lên
 - Modal account (đăng ký miễn phí tại modal.com)
 - Telegram API credentials (lấy từ my.telegram.org)
 - Thư viện: modal, telethon, cryptg
+- N8N instance (self-hosted hoặc cloud)
+- Google Sheets credentials
+- Gemini AI API key (cho AI features)
 
 ## Cài đặt Modal CLI
 
