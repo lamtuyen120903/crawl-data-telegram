@@ -240,6 +240,8 @@ Google Sheets (lưu kết quả phân tích)
 - ID, Name, Link, Date Created
 - Summary, Spam, Subscribers, Frequency
 - Reaction, View, Mention, Referral link
+![Crawl Group Flow 1](images/crawl_group_1.png)
+![Crawl Group Flow 2](images/crawl_group_2.png)
 
 ---
 
@@ -304,10 +306,9 @@ Send Telegram messages (gửi kết quả về cho user)
   - User ranking (chia nhỏ mỗi 23 users)
   - Phân tích Whale behavior cho từng user
 - Phân tích message content để xác định Whale
+https://web.telegram.org/k/#@crawlgroup_bot
 
 ![Telegram Bot Interface](images/tele_bot.png)
-![Crawl Group Flow 1](images/crawl_group_1.png)
-![Crawl Group Flow 2](images/crawl_group_2.png)
 
 ---
 
