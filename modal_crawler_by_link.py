@@ -47,7 +47,7 @@ class DateTimeEncoder(json.JSONEncoder):
     volumes={"/session": session_volume},
     timeout=600,
 )
-async def crawl_channel_by_link(link: str, days: int = 30, download_media: bool = False):
+async def crawl_channel_by_link(link: str, days: int = 30, download_media: bool = False, limit: int = 400):
     """Crawl a specific channel by its link or username."""
     api_id = int(os.environ["API_ID"])
     api_hash = os.environ["API_HASH"]
