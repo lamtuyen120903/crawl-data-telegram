@@ -209,6 +209,9 @@ Google Sheets (lưu kết quả vào Output_Data)
 **Input:** `POST /crawl-keyword-tele` với body chứa keyword chính
 **Output:** Kết quả crawl được lưu vào Google Sheets
 
+![Crawl Keyword Flow](images/crawl_keyword_1.jpeg)
+![Crawl Keyword Result](images/crawl_keyword_2.png)
+
 ---
 
 ### 2. Crawl Channel BD
@@ -269,6 +272,8 @@ Google Sheets (cập nhật vào Outpu_ChannelDatabylink)
 - Mention, Subscribers, Date chạy, Spam
 - Referral link, Referral BingX or not, Language, Summary
 
+![Ana Channel Flow](images/crawl_channel_link.png)
+
 ---
 
 ### 4. Crawl Group BD_ tele bot
@@ -300,6 +305,15 @@ Send Telegram messages (gửi kết quả về cho user)
   - User ranking (chia nhỏ mỗi 23 users)
   - Phân tích Whale behavior cho từng user
 - Phân tích message content để xác định Whale
+
+![Telegram Bot Interface](images/tele_bot.png)
+
+---
+
+### Crawl Group Bot - Chi tiết
+
+![Crawl Group Flow 1](images/crawl_group_1.png)
+![Crawl Group Flow 2](images/crawl_group_2.png)
 
 ---
 
