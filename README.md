@@ -208,8 +208,9 @@ Google Sheets (lưu kết quả vào Output_Data)
 
 **Input:** `POST /crawl-keyword-tele` với body chứa keyword chính
 **Output:** Kết quả crawl được lưu vào Google Sheets
+<img width="889" height="585" alt="Screenshot 2026-04-23 at 14 10 48" src="https://github.com/user-attachments/assets/30a310b5-02b6-4fd4-a56f-43421267f9ef" />
+<img width="1185" height="595" alt="Screenshot 2026-04-23 at 14 11 29" src="https://github.com/user-attachments/assets/8c10ef63-01e2-45b4-a1b0-76293a8be10b" />
 
-![Crawl Keyword Flow](images/crawl_keyword_1.jpeg)
 
 ---
 
@@ -240,8 +241,8 @@ Google Sheets (lưu kết quả phân tích)
 - ID, Name, Link, Date Created
 - Summary, Spam, Subscribers, Frequency
 - Reaction, View, Mention, Referral link
-![Crawl Group Flow 1](images/crawl_group_1.png)
-![Crawl Group Flow 2](images/crawl_group_2.png)
+<img width="1238" height="355" alt="Screenshot 2026-04-23 at 14 10 12" src="https://github.com/user-attachments/assets/d6705ac6-1fdf-4e86-b96d-4d76bfe92adc" />
+
 
 ---
 
@@ -272,8 +273,7 @@ Google Sheets (cập nhật vào Outpu_ChannelDatabylink)
 - Date Created, Reaction, Frequency, View
 - Mention, Subscribers, Date chạy, Spam
 - Referral link, Referral BingX or not, Language, Summary
-![Crawl Keyword Result](images/crawl_keyword_2.png)
-![Ana Channel Flow](images/crawl_channel_link.png)
+<img width="1069" height="218" alt="Screenshot 2026-04-23 at 14 12 10" src="https://github.com/user-attachments/assets/08ac9b93-abcf-4fa0-b412-7360537525d5" />
 
 ---
 
