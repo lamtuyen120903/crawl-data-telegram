@@ -1,0 +1,2145 @@
+{
+  "name": "Crawl Group BD_ tele bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "inline_query",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        2288,
+        1168
+      ],
+      "id": "e379d4c5-9a4c-482e-8499-c699e0ed9955",
+      "name": "Telegram Trigger",
+      "webhookId": "4a8ee20f-c904-4dee-aca1-0dc0bec1a8e8",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "={{ $json.type }}:\n\n{{ $json.content.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4064,
+        928
+      ],
+      "id": "e6a063ac-acbe-4dd4-b2f0-38e3c33f0784",
+      "name": "Send a text message",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = items[0].json;\n\n// Hàm xóa icon và ký tự đặc biệt, chỉ giữ lại chữ, số và dấu câu cơ bản\nconst cleanText = (str) => {\n  if (!str) return '';\n  return str.toString()\n    // Regex này giữ lại: Chữ cái (Tiếng Việt + Latin), Số, Khoảng trắng, và các dấu ( @ . , - _ : )\n    // Các icon như ⌬, ∎, 🥷, 💧 sẽ bị loại bỏ hoàn toàn.\n    .replace(/[^\\w\\s\\dÀ-ỹ@.,\\-_:()]/g, '')\n    .trim();\n};\n\nlet results = [];\n\n// 1. Xử lý danh sách Admin\nconst adminContent =\n  input.admins.map(a => \n  `- ${cleanText(a.first_name)} ${cleanText(a.last_name)} (@${cleanText(a.username || 'NA')}) - Vai tro: ${cleanText(a.role)}`\n).join('\\n');\n\nresults.push({ json: { type: 'Danh sách Admins', content: adminContent } });\n\n// 2. Xử lý danh sách Ranking (Chia nhỏ mỗi 20 người)\nconst chunkSize = 23; \nfor (let i = 0; i < input.ranking.length; i += chunkSize) {\n  const chunk = input.ranking.slice(i, i + chunkSize);\n  const part = Math.floor(i / chunkSize) + 1;\n\n  const body = chunk.map(r => \n    `${r.rank}. ${cleanText(r.name)} (@${cleanText(r.username)}): ${r.message_count} tin`\n  ).join('\\n');\n  \n  results.push({ \n    json: { \n      type: `Danh sách User active nhất trong 1 tháng qua (P.${part})`, \n      content: body \n    } \n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3712,
+        928
+      ],
+      "id": "c37a084d-9384-4e94-a956-693e3b416c0d",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = items[0].json;\n\n// 3. Giữ nguyên danh sách tin nhắn (vì bạn muốn tách thành 3 items)\nconst topMessages = input.top_users_messages;\n\n// Trả về 3 item riêng biệt cho n8n\nreturn [\n  { json: { type: 'messages', content: topMessages } }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3712,
+        1072
+      ],
+      "id": "43b72e36-69fd-4e4d-9cae-9d8637414c7d",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "content",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        4064,
+        1072
+      ],
+      "id": "cf19359a-ecbc-46ce-900a-dad691b91f30",
+      "name": "Split Out2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4352,
+        1072
+      ],
+      "id": "01de42ca-fa14-42a5-9159-81e4ea69a966",
+      "name": "Loop Over Items1",
+      "alwaysOutputData": true,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "text": "={{$('Split Out3').all().map(item => item.json.text).join('\\n')}}\nBased on the messages, analyze whether this is Whale or not?",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Reason",
+              "description": "=Hãy giải thích đây có phải là whale hay không. Tại sao? Đưa ra lời giải thích ngắn gọn trong 1-2 câu, khoảng 20-30 từ.",
+              "required": true
+            },
+            {
+              "name": "losses or gains.",
+              "description": "Đưa ra số liệu về lợi nhuận và thua lỗ trung bình của user. Đưa ra bản tóm tắt ngắn gọn về lợi nhuận (1-2 câu), khoảng 20-30 từ.",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        4800,
+        880
+      ],
+      "id": "2dba5148-b4a0-4c10-995f-f4b59e44f3cf",
+      "name": "Information Extractor3",
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messages",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        4576,
+        880
+      ],
+      "id": "a27a7373-40ab-45ee-b09c-92fd5a51f1cc",
+      "name": "Split Out3",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Phân tích hành vi của User active {{ $('Loop Over Items1').first().json.rank  || \"\"}}\nUsername: @{{ $('Loop Over Items1').first().json.username.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") || \"\" }}\nName: {{ $('Loop Over Items1').first().json.name.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") ||\"\" }}\n\nReason:\n{{ $json.output.Reason }}\n\nLosses or Gains:\n{{ $json.output[\"losses or gains.\"] }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5152,
+        1072
+      ],
+      "id": "45e9b402-3c8d-47a4-8398-17ab50d04815",
+      "name": "Send a text message1",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Mình hoàn thành nhiệm vụ rồi 🤩🤩🤩",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3712,
+        1216
+      ],
+      "id": "76633255-c53d-4959-9e05-77a0f478a673",
+      "name": "Send a text message2",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=🆘🆘🆘 Lỗi rồi, gọi admin xử lý giúp mình nha. \n\n{{ $json.error.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3728,
+        1376
+      ],
+      "id": "370c5375-87de-49c8-ae59-06c9ce761cc4",
+      "name": "Send a text message6",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=🆘🆘🆘 Lỗi rồi, gọi admin xử lý giúp mình nha. \n\n{{ $json.error.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3664,
+        704
+      ],
+      "id": "37926a78-ae6b-4143-b5d8-c4604154c3f1",
+      "name": "Send a text message7",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.data.crawl.items.map(item => item.caption).join('\\n\\n') }}\nHoàn thành các nhiệm vụ dưới đây.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Summary",
+              "description": "=Tóm tắt nội dung của tất cả các bài đăng. Nếu không có nội dung, hãy ghi \"Không có nội dung\" và không thêm gì nữa.\n\nNếu có nội dung, hãy viết các gạch đầu dòng chỉ ra trọng tâm của nhóm. Ví dụ: Tập trung vào thông tin thị trường, dự đoán giá BTC, đề cập đến phân tích kỹ thuật, khóa học/hỗ trợ, hoặc nhóm riêng tư.\n\nTóm tắt trong 1-2 câu, khoảng 10-20 từ.",
+              "required": true
+            },
+            {
+              "name": "referral link",
+              "description": "=Nếu tin nhắn chứa lời kêu gọi hành động (CTA) liên quan đến a referral link, hãy truy cập tin nhắn theo định dạng https://t.me/<channel>/<message_id>, lấy thông tin từ {{ $json.data.crawl.items.map(item => item.image_links).join('\\n') }}để xem tin nhắn và đưa ra referral link. FVí dụ, với donglaochoicoinofficial, tôi thấy tin nhắn 3600 có tín hiệu CTA với referral link,và như tôi dự đoán, nhóm đó có referral link: https://accounts.binance.com/register?ref=FKAEL72N.\n\nIf it doesn't return \"Not\",\n\nNếu không trả về \"Not\",\n\nHãy làm tương tự và đưa ra referral link, bao gồm tất cả các referral links.",
+              "required": true
+            },
+            {
+              "name": "language",
+              "description": "=Specifies the language of the article. It only returns the language it belongs to and doesn't specify anything else. For example: Vietnamese, Indonesian. If unknow retrun \"Multilingual\"",
+              "required": true
+            },
+            {
+              "name": "referral exchange",
+              "description": "=Analyze the content and links from {{ $json.data.crawl.items.map(item => item.image_links).join('\\n') }}. If there are no referral links, return 'Not'.\n\nIf there are, extract and list the exchanges corresponding to those links.\n\nRequirement: Only return the list of exchange names, no further explanation.",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        3696,
+        384
+      ],
+      "id": "a3c6c55e-0941-48df-9cbd-12c95ef44d76",
+      "name": "Information Extractor6",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tinalt0309--telegram-user-analytics-analyze.modal.run",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "group",
+              "value": "={{ $json.message.text }}"
+            },
+            {
+              "name": "days",
+              "value": "=30"
+            },
+            {
+              "name": "ranking_limit",
+              "value": "50"
+            },
+            {
+              "name": "top_n",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3424,
+        1168
+      ],
+      "id": "5aa35493-adcb-4088-9a65-74965f80e85f",
+      "name": "HTTP Request",
+      "executeOnce": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tinalt0309--telegram-single-channel-crawler-crawl.modal.run",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "link",
+              "value": "=https://t.me/{{ $('Switch1').item.json.message.text }}"
+            },
+            {
+              "name": "days",
+              "value": "=90"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3424,
+        528
+      ],
+      "id": "209768ac-06ed-400a-989f-9711bf63d746",
+      "name": "HTTP Request2",
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=- Tên channel: {{ $('HTTP Request2').first().json.data.info.title.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") }}\n- Ngày tạo: {{ $('HTTP Request2').first().json.data.info.date.toDateTime().format('dd-mm-yyyy') }}\n- About: {{ $('HTTP Request2').first().json.data.info.about.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") }}\n- Thành viên: {{ $('HTTP Request2').first().json.data.info.participants_count }}\n- Tổng số bài đăng trong 3 tháng qua: {{ $('HTTP Request2').first().json.data.crawl.total_items }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4400,
+        384
+      ],
+      "id": "8a5239c1-eea0-43f8-b798-12b0dc03a376",
+      "name": "Thông tin channel",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=- Post đầu tiên: {{$('HTTP Request2').first().json.data.crawl.items.at(-1).message_link.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \")|| \"\"}}\n- Post gần nhất: {{$('HTTP Request2').first().json.data.crawl.items.at(0).message_link.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \")|| \"\"}}\n- View: {{ Math.round($('HTTP Request2').first().json.data.crawl.items.reduce((a, b) => a + (Number(b.views) || 0), 0) / $('HTTP Request2').first().json.data.crawl.items.length) ||\"\" }}\n- Forwards: {{ Math.round($('HTTP Request2').first().json.data.crawl.items.reduce((a, b) => a + (Number(b.forwards) || 0), 0) / $('HTTP Request2').first().json.data.crawl.items.length) ||\"\" }}\n- Replies: {{ Math.round($('HTTP Request2').first().json.data.crawl.items.reduce((a, b) => a + (Number(b.replies) || 0), 0) / $('HTTP Request2').first().json.data.crawl.items.length) ||\"\" }}\n- Reaction: {{ Math.round($('HTTP Request2').first().json.data.crawl.items.reduce((a, b) => a + (Number(b.reaction_total) || 0), 0) / $('HTTP Request2').first().json.data.crawl.items.length) ||\"\" }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4624,
+        384
+      ],
+      "id": "42ed18e3-6547-452c-9b48-6afd4e9162de",
+      "name": "Thông tin bài post",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=- Tóm tắt: {{ $('Information Extractor6').first().json.output.Summary }}\n- Ngôn ngữ: {{ $('Information Extractor6').first().json.output.language }}\n- Sàn được liên kết: {{ $('Information Extractor6').first().json.output[\"referral exchange\"] }}\n- Link liên kết với sàn: {{ $('Information Extractor6').item.json.output[\"referral link\"] }}\n- Điểm: {{ (() => {\n  const text = $('Open Router').item.json.choices[0]?.message?.content || '';\n  const match = text.match(/```json([\\s\\S]*?)```/i);\n  if (match) {\n    return JSON.parse(match[1].trim()).score;\n  }\n  return JSON.parse(text.trim()).score;\n})() }}\n- Lý do cho điểm: {{ (() => {\n  const text = $('Open Router').item.json.choices[0]?.message?.content || '';\n  const match = text.match(/```json([\\s\\S]*?)```/i);\n  if (match) {\n    return JSON.parse(match[1].trim()).score;\n  }\n  return JSON.parse(text.trim()).reason;\n})() }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4848,
+        384
+      ],
+      "id": "c808473e-0265-44d9-b849-b3ab1cb82736",
+      "name": "Phân tích",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Mình hoàn thành nhiệm vụ rồi 🤩🤩🤩",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5072,
+        384
+      ],
+      "id": "c9d0008b-5ef1-45c5-93a5-25e5c1045942",
+      "name": "Done",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "=/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "48aef25e-9090-4f2f-a06a-29a1a38da56c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e23de40a-0ebb-4dc6-9698-cf564601de18",
+                    "leftValue": "={{ $json.callback_query.data }}",
+                    "rightValue": "Tiếng Việt",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Tiếng Việt"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fb3581ef-2e0e-4cf2-8c9f-7d418f2caad2",
+                    "leftValue": "={{ $json.callback_query.data }}",
+                    "rightValue": "English",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "English"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5ddd891b-401f-497c-88e4-ef2b53e388b0",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "Dữ Liệu Của Channel",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Dữ Liệu Của Channel"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4ae91bde-a7e2-4a12-94d7-a59213a85c00",
+                    "leftValue": "={{ $json.message.reply_to_message.text }}",
+                    "rightValue": "Vui lòng cho mình biết username của kênh mà bạn muốn thu thập dữ liệu.",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "V-Channel"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "638dd4f7-27b2-4f58-95ea-ff21b88c4cfb",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "Dữ Liệu Của Group",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Dữ Liệu Của Group"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0f22edcf-43fe-4f4e-b80d-caf4e8629297",
+                    "leftValue": "={{ $json.message.reply_to_message.text }}",
+                    "rightValue": "Vui lòng cho mình biết username của group mà bạn muốn thu thập dữ liệu.",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "V-Group"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "31945506-beb3-42aa-be32-a92aa8213224",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "Crawl Channel",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Crawl Channel"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "74a4addd-213c-408f-9c4c-64799a017b05",
+                    "leftValue": "={{ $json.message.reply_to_message.text }}",
+                    "rightValue": "Please tell me the username of the channel you want to collect data from.",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "E-Channel"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3aadbfd5-6830-48f3-a200-c8b2607b04c9",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "=Crawl Group",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Crawl Group"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1ee105c9-302d-4118-b5ed-e8426146497e",
+                    "leftValue": "={{ $json.message.reply_to_message.text }}",
+                    "rightValue": "Please tell me the username of the group from which you want to collect data.",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "E-Group"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2864,
+        1056
+      ],
+      "id": "8951ec1c-d3d0-4e98-8cfa-66c36db0f46a",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.callback_query.from.id }}",
+        "text": "=Bạn cần mình giúp thu thập dữ liệu nào nhỉ ? 🙌",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Dữ Liệu Của Channel",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "Dữ Liệu Của Group",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {},
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2992,
+        224
+      ],
+      "id": "d16eb22c-762c-4eac-ab36-b277dace50e7",
+      "name": "Vietnam",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.callback_query.from.id }}",
+        "text": "=Which crawling task do you need my help with? 🙌",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Crawl Channel",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "Crawl Group",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {},
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2992,
+        416
+      ],
+      "id": "c80c0e3d-f65b-43c8-afa1-bebc9c7cb218",
+      "name": "English",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Vui lòng cho mình biết username của kênh mà bạn muốn thu thập dữ liệu.\n\n⚠️ Vui lòng trả lời (reply) lại tin nhắn này để có thể thu thập dữ liệu.",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3424,
+        336
+      ],
+      "id": "593a82c6-b2c6-48b9-b664-511c188635df",
+      "name": "V-channel",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Vui lòng cho mình biết username của group mà bạn muốn thu thập dữ liệu.\n\n⚠️ Vui lòng trả lời (reply) lại tin nhắn này để có thể thu thập dữ liệu.",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3472,
+        784
+      ],
+      "id": "a0606aad-8e0f-440e-97dd-2e6a9f7dc7b3",
+      "name": "V-Group",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Please tell me the username of the channel you want to collect data from.\n\n⚠️ Please reply to this message to allow data collection.",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3392,
+        1776
+      ],
+      "id": "5f8d7373-436c-4b1c-82a0-809c3ce9f108",
+      "name": "E-Channel",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Please tell me the username of the group from which you want to collect data.\n\n⚠️ Please reply to this message to allow data collection.",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3376,
+        2256
+      ],
+      "id": "fa36a0e3-aead-43ef-9774-1ae4a7b0731c",
+      "name": "E-Group",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=🆘🆘🆘 Error! Please call the admin to fix it.\n\n{{ $json.error.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3648,
+        2176
+      ],
+      "id": "1431a75b-4d8c-400a-a765-af9bd62e775c",
+      "name": "Send a text message8",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.data.crawl.items.map(item => item.caption).join('\\n\\n') }}\nComplete the tasks below.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Summary",
+              "description": "=Summarize the content of all posts. If there is no content, write \"No content\" and add nothing more.\n\nIf there is content, write bullet points indicating the group's focus. For example: Focus on market information, BTC price predictions, mention of technical analysis, courses/support, or private group.\n\nSummarize in 1-2 sentences, approximately 10-20 words.",
+              "required": true
+            },
+            {
+              "name": "referral link",
+              "description": "=If the message contains a call to action (CTA) related to a referral link, access the message in the format https://t.me/<channel>/<message_id>, retrieve the information from {{ $json.data.crawl.items.map(item => item.image_links).join('\\n') }} to view the message and provide the referral link. For example, with donglaochoicoinofficial, I see message 3600 has a CTA signal with a referral link, and as I predicted, that group has a referral link: https://accounts.binance.com/register?ref=FKAEL72N.\n\nIf it doesn't return \"Not\",\n\nIf it doesn't return \"Not\",\n\nDo the same and provide the referral link, including all referral links.",
+              "required": true
+            },
+            {
+              "name": "language",
+              "description": "=Specifies the language of the article. It only returns the language it belongs to and doesn't specify anything else. For example: Vietnamese, Indonesian. If unknow retrun \"Multilingual\"",
+              "required": true
+            },
+            {
+              "name": "referral exchange",
+              "description": "=Analyze the content and links from {{ $json.data.crawl.items.map(item => item.image_links).join('\\n') }}. If there are no referral links, return 'Not'.\n\nIf there are, extract and list the exchanges corresponding to those links (e.g., Binance, Bybit, OKX, OKX, BingX...).\n\nRequirement: Only return the list of exchange names, no further explanation.",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        3616,
+        1888
+      ],
+      "id": "039a5056-204b-4bab-b161-1581a2cb2fd9",
+      "name": "Information Extractor",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tinalt0309--telegram-single-channel-crawler-crawl.modal.run",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "link",
+              "value": "=https://t.me/{{ $json.message.text.replace(\"@\",\"\") }}"
+            },
+            {
+              "name": "days",
+              "value": "=90"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3408,
+        1984
+      ],
+      "id": "a338d0f3-1972-47b8-b6a6-89fe4b806d5f",
+      "name": "HTTP Request3",
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=I've completed the task! 🤩🤩🤩",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4992,
+        1888
+      ],
+      "id": "7170572a-a4e6-40fe-a920-78bc7c792c0b",
+      "name": "Done1",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "={{ $json.type }}:\n\n{{ $json.content.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4032,
+        2336
+      ],
+      "id": "122f5a60-7072-423f-aadd-67023917dda9",
+      "name": "Send a text message3",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = items[0].json;\n\n// Hàm xóa icon và ký tự đặc biệt, chỉ giữ lại chữ, số và dấu câu cơ bản\nconst cleanText = (str) => {\n  if (!str) return '';\n  return str.toString()\n    // Regex này giữ lại: Chữ cái (Tiếng Việt + Latin), Số, Khoảng trắng, và các dấu ( @ . , - _ : )\n    // Các icon như ⌬, ∎, 🥷, 💧 sẽ bị loại bỏ hoàn toàn.\n    .replace(/[^\\w\\s\\dÀ-ỹ@.,\\-_:()]/g, '')\n    .trim();\n};\n\nlet results = [];\n\n// 1. Xử lý danh sách Admin\nconst adminContent =\n  input.admins.map(a => \n  `- ${cleanText(a.first_name)} ${cleanText(a.last_name)} (@${cleanText(a.username || 'NA')}) - Vai tro: ${cleanText(a.role)}`\n).join('\\n');\n\nresults.push({ json: { type: 'List of Admins', content: adminContent } });\n\n// 2. Xử lý danh sách Ranking (Chia nhỏ mỗi 20 người)\nconst chunkSize = 23; \nfor (let i = 0; i < input.ranking.length; i += chunkSize) {\n  const chunk = input.ranking.slice(i, i + chunkSize);\n  const part = Math.floor(i / chunkSize) + 1;\n\n  const body = chunk.map(r => \n    `${r.rank}. ${cleanText(r.name)} (@${cleanText(r.username)}): ${r.message_count} messages`\n  ).join('\\n');\n  \n  results.push({ \n    json: { \n      type: `List of the most active users in the past month(P.${part})`, \n      content: body \n    } \n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3680,
+        2336
+      ],
+      "id": "f92a4c89-e9b8-4ca9-8684-59a9b02a9efb",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = items[0].json;\n\n// 3. Giữ nguyên danh sách tin nhắn (vì bạn muốn tách thành 3 items)\nconst topMessages = input.top_users_messages;\n\n// Trả về 3 item riêng biệt cho n8n\nreturn [\n  { json: { type: 'messages', content: topMessages } }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3680,
+        2528
+      ],
+      "id": "0ed29db5-83f9-4b68-86cc-c08a964d6558",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "content",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        4032,
+        2528
+      ],
+      "id": "dbaf322a-ceb6-4d4a-a21c-3c206abd982d",
+      "name": "Split Out",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4320,
+        2528
+      ],
+      "id": "f26db742-f44d-447d-a4a6-b56cdae7d21a",
+      "name": "Loop Over Items",
+      "alwaysOutputData": true,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "text": "={{$('Split Out4').all().map(item => item.json.text).join('\\n')}}\nBased on the messages, analyze whether this is Whale or not?",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Reason",
+              "description": "=Explain whether this is a whale or not. Why? Provide a brief explanation in 1-2 sentences, approximately 20-30 words.",
+              "required": true
+            },
+            {
+              "name": "losses or gains.",
+              "description": "Provide data on the average profit and loss of users. Give a brief summary of the profit (1-2 sentences), approximately 20-30 words.",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        4768,
+        2336
+      ],
+      "id": "0347d719-fa87-4f31-a418-edb3490bc1fd",
+      "name": "Information Extractor4",
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messages",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        4544,
+        2336
+      ],
+      "id": "e55bdc0f-785d-45aa-8131-e9bfb8ba5f83",
+      "name": "Split Out4",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Analyzing the actions of active users {{ $('Loop Over Items').first().json.rank  || \"\"}}\nUsername: @{{ $('Loop Over Items').first().json.username.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") || \"\" }}\nName: {{ $('Loop Over Items').first().json.name.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") ||\"\" }}\n\nReason:\n{{ $json.output.Reason }}\n\nLosses or Gains:\n{{ $json.output[\"losses or gains.\"] }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        5120,
+        2528
+      ],
+      "id": "d65fb0f1-3406-4e3e-ac3c-83f067d24ec1",
+      "name": "Send a text message4",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=I've completed the task! 🤩🤩🤩",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3680,
+        2720
+      ],
+      "id": "57099797-ae51-4725-b56c-24c6ad842fea",
+      "name": "Send a text message5",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=🆘🆘🆘 Error! Please call the admin to fix it. \n\n{{ $json.error.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3680,
+        2912
+      ],
+      "id": "438c7fdb-03dd-4a27-a00e-c514fd84a29b",
+      "name": "Send a text message9",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tinalt0309--telegram-user-analytics-analyze.modal.run",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "group",
+              "value": "={{ $json.message.text }}"
+            },
+            {
+              "name": "days",
+              "value": "=30"
+            },
+            {
+              "name": "ranking_limit",
+              "value": "50"
+            },
+            {
+              "name": "top_n",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3392,
+        2624
+      ],
+      "id": "442bdcdf-4e42-4aa0-8964-85b989715912",
+      "name": "HTTP Request1",
+      "executeOnce": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Chọn ngôn ngữ mình thích nhé. ❣️/ Choose your preferred language.❣️",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Tiếng Việt",
+                    "additionalFields": {
+                      "callback_data": "Tiếng Việt"
+                    }
+                  },
+                  {
+                    "text": "English",
+                    "additionalFields": {
+                      "callback_data": "English"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2992,
+        32
+      ],
+      "id": "de7e4f63-71f5-4dcf-bbd9-c7c0e12232bc",
+      "name": "language",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Tiếng việt",
+        "height": 1408,
+        "width": 2016,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3312,
+        160
+      ],
+      "id": "59f56b61-c5cb-40a3-bc17-c92a52be37c1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Tiếng anh",
+        "height": 1408,
+        "width": 2016,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3328,
+        1712
+      ],
+      "id": "54c1ee03-f7c7-42fc-a2a2-b961377b7475",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=- Channel name: {{ $('HTTP Request3').first().json.data.info.title.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") }}\n- Date Created: {{ $('HTTP Request3').first().json.data.info.date.toDateTime().format('dd-mm-yyyy') }}\n- About: {{ $('HTTP Request3').first().json.data.info.about.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \") }}\n- Members: {{ $('HTTP Request3').first().json.data.info.participants_count }}\n- Total number of posts in the last 3 months: {{ $('HTTP Request3').first().json.data.crawl.total_items }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4320,
+        1888
+      ],
+      "id": "0b28fce0-9bcb-42cf-887e-6afdd9b9585e",
+      "name": "Info channel1",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=- First post: {{$('HTTP Request3').first().json.data.crawl.items.at(-1).message_link.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \")|| \"\"}}\n- Latest post: {{$('HTTP Request3').first().json.data.crawl.items.at(0).message_link.replace(/_/g, '\\\\_').replace(/\\*/g, '\\\\*').trim().replace(\"  \", \" \")|| \"\"}}\n- View: {{ Math.round($('HTTP Request3').first().json.data.crawl.items.reduce((a, b) => a + (Number(b.views) || 0), 0) / $('HTTP Request3').first().json.data.crawl.items.length) ||\"\" }}\n- Forwards: {{ Math.round($('HTTP Request3').first().json.data.crawl.items.reduce((a, b) => a + (Number(b.forwards) || 0), 0) / $('HTTP Request3').first().json.data.crawl.items.length) ||\"\" }}\n- Replies: {{ Math.round($('HTTP Request3').first().json.data.crawl.items.reduce((a, b) => a + (Number(b.replies) || 0), 0) / $('HTTP Request3').first().json.data.crawl.items.length) ||\"\" }}\n- Reaction: {{ Math.round($('HTTP Request3').first().json.data.crawl.items.reduce((a, b) => a + (Number(b.reaction_total) || 0), 0) / $('HTTP Request3').first().json.data.crawl.items.length) ||\"\" }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4544,
+        1888
+      ],
+      "id": "e68df372-c1ac-4cb3-be9d-321f82036648",
+      "name": "Info post",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=- Summary: {{ $('Information Extractor').first().json.output.Summary }}\n- Language: {{ $('Information Extractor').first().json.output.language }}\n- Linked exchanges: {{ $('Information Extractor').first().json.output[\"referral exchange\"] }}\n- Link to the exchange: {{ $('Information Extractor').item.json.output[\"referral link\"] }}\n- Point: {{ (() => {\n  const text = $('Open Router1').item.json.choices[0]?.message?.content || '';\n  const match = text.match(/```json([\\s\\S]*?)```/i);\n  if (match) {\n    return JSON.parse(match[1].trim()).score;\n  }\n  return JSON.parse(text.trim()).score;\n})() }}\n- Reason for scoring: {{ (() => {\n  const text = $('Open Router1').item.json.choices[0]?.message?.content || '';\n  const match = text.match(/```json([\\s\\S]*?)```/i);\n  if (match) {\n    return JSON.parse(match[1].trim()).score;\n  }\n  return JSON.parse(text.trim()).reason;\n})() }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4768,
+        1888
+      ],
+      "id": "882f9df3-2ad0-4f19-814c-576fd7a721b8",
+      "name": "Analysis",
+      "webhookId": "37f4831b-ff92-4443-ae0b-2a43ab0636a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7a6t8akTiopOWVnl",
+          "name": "Crawl Group"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        3680,
+        576
+      ],
+      "id": "c60fcc45-0641-493b-892c-34d690e8356c",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "vAvYCEq60BXIqBOk",
+          "name": "OpenRouter account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  messages: [\n    {\n      role: \"system\",\n      content: \"Bạn là chuyên gia đánh giá influencer crypto/forex. Dựa trên thông tin influencer được cung cấp, hãy tính điểm tổng hợp và giải thích ngắn gọn. TIÊU CHÍ ĐÁNH GIÁ: 1. Số lượng followers: <500 = 5 điểm, 500-5000 = 10 điểm, >5000 = 20 điểm. 2. Lịch sử hợp tác sàn crypto: sàn forex = 5 điểm, chưa có = 10 điểm, đã có chia sẻ link ref = 20 điểm. 3. First day post: <3 tháng = 5 điểm, 3-6 tháng = 10 điểm, >=6 tháng = 20 điểm. 4. Last post: >4 tuần = 5 điểm, 2-4 tuần = 10 điểm, <1 tuần = 20 điểm. 5. Nội dung & tần suất đăng bài: <1 bài/tuần = 5 điểm, 1-3 bài/tuần = 10 điểm, >3 bài/tuần = 20 điểm. 6. Phong cách nội dung: tin tức/airdrop/spot trading/longterm holding = 10 điểm, education/trading/signal/hoàn phí/daily trading = 20 điểm. 7. Tỷ lệ tương tác thật: <100 react = 5 điểm, 100-200 react = 10 điểm, >200 react = 20 điểm. YÊU CẦU OUTPUT CHỈ JSON HỢP LỆ: {\\\"score\\\": số nguyên, \\\"reason\\\": \\\"nhận xét ngắn\\\"}. Tổng điểm tối đa là 140. Làm tròn đến số nguyên.\"\n    },\n    {\n      role: \"user\",\n      content: JSON.stringify($('HTTP Request2').item.json.data)\n    }\n  ],\n  max_tokens: 400,\n  model: \"openai/gpt-4.1-mini\",\n  temperature: 0.7\n} }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "157b17e7-0d00-4220-ac25-29aa913e259a",
+      "name": "Open Router",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4064,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        3696,
+        2032
+      ],
+      "id": "bffc3cb2-d64a-4006-8af3-c05fb3dec7d4",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "vAvYCEq60BXIqBOk",
+          "name": "OpenRouter account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  messages: [\n    {\n      role: \"system\",\n      content: \"You are a crypto/forex influencer evaluation expert. Based on the influencer information provided, calculate a total score and provide a brief explanation. EVALUATION CRITERIA: 1. Number of followers: <500 = 5 points, 500-5000 = 10 points, >5000 = 20 points. 2. Crypto exchange partnership history: forex exchange = 5 points, none = 10 points, referral link sharing = 20 points. 3. First day post: <3 months = 5 points, 3-6 months = 10 points, >=6 months = 20 points. 4. Last post: >4 weeks = 5 points, 2-4 weeks = 10 points, <1 week = 20 points. 5. Content & Posting Frequency: <1 post/week = 5 points, 1-3 posts/week = 10 points, >3 posts/week = 20 points. 6. Content Style: News/Airdrop/Spot Trading/Long-Term Holding = 10 points, Education/Trading/Signal/Refund/Daily Trading = 20 points. 7. Genuine Engagement Rate: <100 Reactions = 5 points, 100-200 Reactions = 10 points, >200 Reactions = 20 points. OUTPUT REQUIRE ONLY VALID JSON: {\\\"score\\\": integer, \\\"reason\\\": \\\"short comment\\\"}. Maximum total score is 140. Round to the nearest integer.\"\n    },\n    {\n      role: \"user\",\n      content: JSON.stringify($('HTTP Request3').item.json.data)\n    }\n  ],\n  max_tokens: 400,\n  model: \"openai/gpt-4.1-mini\",\n  temperature: 0.7\n} }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "18d7765c-cc94-4356-aa73-51530e0300b0",
+      "name": "Open Router1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3984,
+        1888
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        4848,
+        1040
+      ],
+      "id": "b3971b75-a3dd-40da-9709-120e1cafdcef",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "vAvYCEq60BXIqBOk",
+          "name": "OpenRouter account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        4768,
+        2560
+      ],
+      "id": "be2a27af-c538-4a4b-9779-1b3826c4cc0e",
+      "name": "OpenRouter Chat Model3",
+      "credentials": {
+        "openRouterApi": {
+          "id": "vAvYCEq60BXIqBOk",
+          "name": "OpenRouter account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 748820293,
+          "message": {
+            "message_id": 790,
+            "from": {
+              "id": 1995342928,
+              "is_bot": false,
+              "first_name": "Celina",
+              "username": "celinaBingX",
+              "language_code": "en",
+              "is_premium": true
+            },
+            "chat": {
+              "id": 1995342928,
+              "first_name": "Celina",
+              "username": "celinaBingX",
+              "type": "private"
+            },
+            "date": 1776684791,
+            "reply_to_message": {
+              "message_id": 789,
+              "from": {
+                "id": 8475331341,
+                "is_bot": true,
+                "first_name": "Crawl Data",
+                "username": "crawlgroup_bot"
+              },
+              "chat": {
+                "id": 1995342928,
+                "first_name": "Celina",
+                "username": "celinaBingX",
+                "type": "private"
+              },
+              "date": 1776684786,
+              "text": "Vui lòng cho mình biết username của kênh mà bạn muốn thu thập dữ liệu.\n\n⚠️ Vui lòng trả lời (reply) lại tin nhắn này để có thể thu thập dữ liệu."
+            },
+            "text": "echphaisinh"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor6": {
+      "main": [
+        [
+          {
+            "node": "Open Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Thông tin channel": {
+      "main": [
+        [
+          {
+            "node": "Thông tin bài post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Thông tin bài post": {
+      "main": [
+        [
+          {
+            "node": "Phân tích",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phân tích": {
+      "main": [
+        [
+          {
+            "node": "Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "language",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vietnam",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "English",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "V-channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "V-Group",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "E-Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "E-Group",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Open Router1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Split Out4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor4": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out4": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Info channel1": {
+      "main": [
+        [
+          {
+            "node": "Info post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Info post": {
+      "main": [
+        [
+          {
+            "node": "Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analysis": {
+      "main": [
+        [
+          {
+            "node": "Done1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor6",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open Router": {
+      "main": [
+        [
+          {
+            "node": "Thông tin channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open Router1": {
+      "main": [
+        [
+          {
+            "node": "Info channel1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor4",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2a58d760-75e0-4cdd-b7a9-833dfbc8a17b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f5fb4061ed08960c69361f3ac140c4b4a1277c94431dab6c42e4e1cf6a2153b5"
+  },
+  "id": "GRZKC7qv5g8qPm00",
+  "tags": []
+}

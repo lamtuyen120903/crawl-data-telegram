@@ -1,0 +1,2803 @@
+{
+  "name": "Crawl channel - combine",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "crawl-keyword-tele",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -784,
+        112
+      ],
+      "id": "2c6209bc-9cb4-48ae-9835-360efd87b191",
+      "name": "Webhook",
+      "webhookId": "41948896-b001-4a6c-b64d-5f36e615201e"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $('Webhook').item.json.body['Từ khoá chính'] }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "=**Role:** Crypto Telegram Search Expert.\n**Task:** Generate 5-10 specialized crypto-related search terms by adding suffixes to a primary keyword.\n\n**Operational Workflow:**\n\n1. **Language Detection:** Identify the language of the primary keyword to generate appropriate suffixes (e.g., if Vietnamese: \"Kèo\", \"Săn Gem\", \"Tin tức\"; if English: \"Signals\", \"Alpha\", \"Global\").\n2. **Suffix Selection:** Use high-traffic Telegram crypto terms: *Community, Official, Airdrop, Gems, Pump, Trading, Chat, VIP, News, Hub, Alpha, Signals, Alerts.*\n3. **Exclusion Algorithm:** - Compare every new keyword against the **Danh sách loại trừ**: `{{ $('Keyword').all().map(item => item.json['Dãy từ khoá'] ) }}`.\n* Comparison must be **case-insensitive** and **ignore extra whitespace**.\n* If a match exists, replace it immediately with a unique variation.\n\n\n4. **Quantity:** Output between **5 and 10** unique results.\n\n**Strict Constraints:**\n\n* **Output ONLY the final list of keywords.**\n* **Formatting:** All results must be separated ONLY by a comma (`,`).\n* **NO** explanations, **NO** greetings, **NO** introductory text, **NO** line breaks.\n\n**Input Structure:**\n\n* Primary Keyword: [User Input]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        112
+      ],
+      "id": "fc163112-0444-48f4-ac37-f4440cd6ee84",
+      "name": "Message a model",
+      "executeOnce": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hLaCmEpDi18aodgc",
+          "name": "Google Gemini(PaLM) BingX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 170502168,
+          "mode": "list",
+          "cachedResultName": "Output_Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=170502168"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -544,
+        112
+      ],
+      "id": "34f94086-95c0-4b3e-8bfc-aa14d74920d4",
+      "name": "Data",
+      "executeOnce": true,
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1036023529,
+          "mode": "list",
+          "cachedResultName": "Input_Keyword",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=1036023529"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -320,
+        112
+      ],
+      "id": "cb98dc44-84b1-4359-899d-8a8f48149141",
+      "name": "Keyword",
+      "executeOnce": true,
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Lấy data của channel để lọc ra ko trùng",
+        "height": 336,
+        "width": 150
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -80
+      ],
+      "id": "7c77a986-b22c-46c8-bdfb-2cf58f4a1902",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Lấy Keywword",
+        "height": 320,
+        "width": 150
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        -64
+      ],
+      "id": "ac9082bf-6c91-4226-959b-fed68db91a51",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1036023529,
+          "mode": "list",
+          "cachedResultName": "Input_Keyword",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=1036023529"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Webhook').item.json.body.row_index }}",
+            "Dãy từ khoá": "={{ $json.content.parts[0].text }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Từ khoá chính",
+              "displayName": "Từ khoá chính",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Thời gian bắt đầu",
+              "displayName": "Thời gian bắt đầu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Thời gian kết thúc",
+              "displayName": "Thời gian kết thúc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Dãy từ khoá",
+              "displayName": "Dãy từ khoá",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        112
+      ],
+      "id": "559ea734-abfe-4878-a325-a72af87e2779",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Update dãy từ khoá",
+        "height": 320,
+        "width": 150
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -64
+      ],
+      "id": "8012c24f-22b4-4918-9ced-c534f87b556d",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        640,
+        112
+      ],
+      "id": "011a178f-43f1-4408-98d0-6a867ae6865e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "872660f6-96a0-471e-9f27-be591d70de8b",
+              "leftValue": "={{ $json.cmd[0].p_cmd }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1120,
+        432
+      ],
+      "id": "3ab3dd0c-70d0-4733-bf74-40d499c9c958",
+      "name": "If CMD isvalid1"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.cmd[0].p_cmd }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        416
+      ],
+      "id": "2d4071f0-f497-49f4-9a14-c4bdacea7c73",
+      "name": "Execute CMD1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Lấy dữ liệu từ node trước đó\nconst item = $input.first().json;\nconst stdout = item.stdout;\n\n// 2. Kiểm tra xem stdout có tồn tại không\nif (!stdout || stdout.trim() === \"\") {\n    return [{\n        json: {\n            status: \"error\",\n            message: \"stdout trống, không có dữ liệu để parse.\",\n            raw_item: item\n        }\n    }];\n}\n\ntry {\n    // 3. Parse chuỗi JSON từ stdout\n    const parsedData = JSON.parse(stdout);\n\n    // 4. Trả về kết quả (Giữ nguyên cấu trúc gốc của Python script trả về)\n    // Cách này giúp code hoạt động cho mọi nền tảng (X, Tele, YT)\n    return [{\n        json: {\n            ...parsedData, // Giải nén toàn bộ dữ liệu đã parse vào đây\n            metadata_execution: {\n                exitCode: item.exitCode,\n                stderr: item.stderr\n            }\n        }\n    }];\n\n} catch (error) {\n    // 5. Trường hợp stdout không phải JSON (có thể là log hoặc lỗi text)\n    return [{\n        json: {\n            status: \"parse_error\",\n            message: \"Không thể parse JSON từ stdout. Có thể script gặp lỗi hoặc trả về text.\",\n            error_detail: error.message,\n            raw_stdout: stdout\n        }\n    }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        416
+      ],
+      "id": "81a6b5f4-86d3-4070-bad0-7d2a9c55d6c4",
+      "name": "Check Error code and parse data in ouput1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.Platform }}",
+                    "rightValue": "Youtube",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6754123f-8347-4482-9498-5164383cd1e0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "youtube"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "158e9669-e476-4818-8b8d-ab8bca4bbad1",
+                    "leftValue": "={{ $('Webhook').item.json.body.Platform }}",
+                    "rightValue": "Telegram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "telegram"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "470e2155-aad2-4778-a751-daf8eaddd5ef",
+                    "leftValue": "={{ $('Webhook').item.json.body.Platform }}",
+                    "rightValue": "X",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "x"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        80
+      ],
+      "id": "43fe17c1-0fd2-42f8-a6cf-80c20a0579c1",
+      "name": "Switch Single Platform1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e1d23005-3593-4d27-a856-6f7eb5852e87",
+              "leftValue": "={{ $json.hasError }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3232,
+        112
+      ],
+      "id": "188eaae8-31af-4f37-a477-a2ba263c9826",
+      "name": "If not error"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2560,
+        96
+      ],
+      "id": "525d6798-79be-44f4-85c6-fb0c00df8a64",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\n\nconst stderr = input.stderr || '';\nconst stdout = input.stdout || '';\n\nconst hashtagSet = new Set(); // Sửa thành new Set()\n\n// 1️⃣ Regex check lỗi\nconst ERROR_REGEX = /\\b(error|exception|traceback|fatal|failed|timeout|panic|unhandled)\\b/i;\nconst hasError = ERROR_REGEX.test(stderr);\n\n// 2️⃣ Parse stdout string -> JSON\nlet parsedData = null;\nlet parseError = null;\n\nif (stdout) {\n  try {\n    // Nếu stdout là chuỗi JSON, parse nó. Nếu đã là Object thì dùng luôn.\n    parsedData = typeof stdout === 'string' ? JSON.parse(stdout) : stdout;\n\n    // Đảm bảo parsedData là mảng để lặp\n    const dataArray = Array.isArray(parsedData) ? parsedData : [parsedData];\n\n    for (const item of dataArray) {\n      // Giả sử item.tags và item.hashtags là mảng các chuỗi\n      if (item.tags) item.tags.forEach(t => hashtagSet.add(t.toLowerCase()));\n      if (item.hashtags) item.hashtags.forEach(h => hashtagSet.add(h.toLowerCase()));\n    }\n  } catch (err) {\n    parseError = err.message;\n  }\n}\n\n// 3️⃣ Return kết quả\nreturn {\n  hasError,\n  parsed: Boolean(parsedData),\n  parseError,\n  data: parsedData,\n  uniqueHashtags: Array.from(hashtagSet) // Chuyển Set về Array để n8n hiển thị được\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3008,
+        112
+      ],
+      "id": "bc0a0e55-33ae-4545-a1b0-794bfa2867e5",
+      "name": "Check and parse data1"
+    },
+    {
+      "parameters": {
+        "executeOnce": false,
+        "command": "={{ $json.cmd }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2784,
+        112
+      ],
+      "id": "f0f9b37f-07ec-40fb-bd3f-a246f5580532",
+      "name": "Execute posts1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3cd8cd4f-8863-4fc1-8ef0-dc61ff18602e",
+                    "leftValue": "={{ $('Loop Over Items2').item.json.platform }}",
+                    "rightValue": "youtube",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "youtube"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items2').item.json.platform }}",
+                    "rightValue": "telegram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "15258321-fe5c-444e-bd13-c4b8743f38b1"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "telegram"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9efcd667-037f-4ed0-8bed-1691886f8e00",
+                    "leftValue": "={{ $('Loop Over Items2').item.json.platform }}",
+                    "rightValue": "x",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "x"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        3456,
+        80
+      ],
+      "id": "ffe919c1-5a30-4ed5-97d9-934ef64a4921",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 170502168,
+          "mode": "list",
+          "cachedResultName": "Output_Data_Telegram",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=170502168"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Loop Over Items2').item.json.username || \"\"}}",
+            "Link": "={{ $('Loop Over Items2').item.json.url }}",
+            "Summary": "={{ $('Information Extractor1').item.json.output.Summary || \"\"}}",
+            "ID": "={{ $('Loop Over Items2').item.json.channel_id }}",
+            "Date Crawl": "={{ $now.format('hh:mm dd/MM/yyyy')}}",
+            "Type": "={{ $('Loop Over Items2').item.json.type || \"\"}}",
+            "Date Created": "={{ $('Loop Over Items2').item.json.created_date?.toDateTime().format('HH:mm dd/MM/yyyy') || \"01/01/2026\" }}",
+            "Subscribers": "={{ $('Loop Over Items2').item.json.subscribers || \"\"}}",
+            "View": "={{ Math.round($('Check and parse data1').first().json.data.reduce((a, b) => a + (Number(b.views) || 0), 0) / $('Check and parse data1').first().json.data.length) ||\"\" }}",
+            "Referral link": "={{ $('Information Extractor1').item.json.output['referral link'] || \"\"}}",
+            "Last Post": "={{ $('Switch').first().json.data[0].url }}",
+            "Style": "={{ $('Information Extractor1').item.json.output.Style || \"\" }}",
+            "Content Language": "={{ $('Information Extractor1').item.json.output.language }}",
+            "Referral Exchange": "={{ $('Information Extractor1').item.json.output['referral exchange'] }}",
+            "First Post": "={{$('Switch').first().json.data.at(-1).url|| \"\"}}",
+            "Score": "={{\n(() => {\n  const text = $json.candidates[0]?.content?.parts[0]?.text || '';\n  const match = text.match(/```json([\\s\\S]*?)```/i);\n  if (match) {\n    return JSON.parse(match[1].trim()).score;\n  }\n  return JSON.parse(text.trim()).score;\n})()\n}}",
+            "Reason": "={{ (() => {   const text = $json.candidates[0]?.content?.parts[0]?.text || '';   const match = text.match(/```json([\\s\\S]*?)```/i);   if (match) {     return JSON.parse(match[1].trim()).score;   }   return JSON.parse(text.trim()).reason; })() }}",
+            "3 THÁNG": "={{ $('Information Extractor1').item.json.output.Frequency || \"\"}}",
+            "Keyword": "={{ $('Webhook').first().json.body['Từ khoá chính'] }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "Date Crawl",
+              "displayName": "Date Crawl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date Created",
+              "displayName": "Date Created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "First Post",
+              "displayName": "First Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Post",
+              "displayName": "Last Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Subscribers",
+              "displayName": "Subscribers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "3 THÁNG",
+              "displayName": "3 THÁNG",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "View",
+              "displayName": "View",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Style",
+              "displayName": "Style",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Referral Exchange",
+              "displayName": "Referral Exchange",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Referral link",
+              "displayName": "Referral link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Content Language",
+              "displayName": "Content Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BD Assigned",
+              "displayName": "BD Assigned",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Contact?",
+              "displayName": "Contact?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Manual note",
+              "displayName": "Manual note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4368,
+        96
+      ],
+      "id": "cbda91d0-0759-40d5-ae55-9ab67912c02b",
+      "name": "Append or update row in sheet tele1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.data.map(item => item.caption).join('\\n') }}\nComplete the tasks below.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Summary",
+              "description": "=Summarize the content of all posts. If there is no content, return \"No content\" and don't add anything further.\n\nIf there is content, write bullet points indicating what the group focuses on. For example: Focuses on market insights, BTC price prediction, Technical Analysis Mentions, courses/support, or private group.\n\nSummarize in 1-2 sentences, approximately 10-20 words",
+              "required": true
+            },
+            {
+              "name": "Spam",
+              "description": "=Provide the number of articles that are unrelated to the given keywords.",
+              "required": true
+            },
+            {
+              "name": "referral link",
+              "description": "=If the message contains a call to action (CTA) related to a referral link, access the message in the format https://t.me/<channel>/<message_id>, retrieve the information from  {{ $json.data.map(item => item.media_urls).join(' ') }}to view the message and provide the referral link. For example, with donglaochoicoinofficial, I see message 3600 has a CTA signal with a referral link, and as I predicted, that group has a referral link: https://accounts.binance.com/register?ref=FKAEL72N.\n\nIf it doesn't return \"Not\",\n\nDo the same and provide the post with the referral link, including all referral links.",
+              "required": true
+            },
+            {
+              "name": "language",
+              "description": "=Specifies the language of the article. It only returns the language it belongs to and doesn't specify anything else. For example: Vietnamese, Indonesian. If unknow retrun \"Multilingual\"",
+              "required": true
+            },
+            {
+              "name": "Frequency",
+              "description": "=Based on the posting dates {{ $json.data.map(item => item.posted_at).join('\\n') }}, count the average number of posts that channel or group publishes per month.\nJust provide the number and don't provide any further information.",
+              "required": true
+            },
+            {
+              "name": "Style",
+              "description": "=Analyze the posts to determine the style of this group. If there is no content, return 'No content'.\n\nRequirements:\n\nIdentify the style: News/Airdrop/Spot trading/Longterm holding/Education/Trading/Signal/Daily trading/Spot, Future/Signal, or Rebate.\n\nSummarize the style in 1-5 words.",
+              "required": true
+            },
+            {
+              "name": "language",
+              "description": "=Specifies the language of the article. It only returns the language it belongs to and doesn't specify anything else. For example: Vietnamese, Indonesian. If unknow retrun \"Multilingual\"",
+              "required": true
+            },
+            {
+              "name": "referral exchange",
+              "description": "=Analyze the content and links from {{ $json.data.map(item => item.media_urls).join(' ') }}. If there are no referral links, return 'Not'.\n\nIf there are, extract and list the exchanges corresponding to those links (e.g., Binance, Bybit, OKX, OKX, BingX...).\n\nRequirement: Only return the list of exchange names, no further explanation.",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        3680,
+        96
+      ],
+      "id": "007b4820-5f20-4124-9c42-f51b718912a8",
+      "name": "Information Extractor1",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1036023529,
+          "mode": "list",
+          "cachedResultName": "Input_Keyword",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=1036023529"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Webhook').first().json.body.row_index }}",
+            "Status": "DONE"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Từ khoá chính",
+              "displayName": "Từ khoá chính",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Limit",
+              "displayName": "Limit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Platform",
+              "displayName": "Platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Thời gian bắt đầu",
+              "displayName": "Thời gian bắt đầu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Thời gian kết thúc",
+              "displayName": "Thời gian kết thúc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Dãy từ khoá",
+              "displayName": "Dãy từ khoá",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2784,
+        -48
+      ],
+      "id": "677bff44-be82-4aa6-bffe-2686b45ab05f",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Lấy dữ liệu từ các node trước\nconst existingRows = $(\"retrieve existing data\").all();\nconst existingIds = existingRows.map(item => String(item.json.ID));\nconst newItems = $(\"merge_profiles\").all();\n\n// 2. Lấy giá trị Limit từ Webhook (nếu không có thì mặc định lấy 10)\nconst webhookData = $(\"Webhook\").first().json.body;\nconst limit = parseInt(webhookData.Limit) || 10;\n\n// 3. Lọc trùng\nlet filtered = newItems.filter(item => {\n    const channelId = String(item.json.channel_id);\n    return !existingIds.includes(channelId);\n});\n\n// 4. TRỘN NGẪU NHIÊN (Shuffle) danh sách đã lọc\nfiltered = filtered.sort(() => Math.random() - 0.5);\n\n// 5. CẮT DANH SÁCH theo Limit của Webhook và định dạng lại JSON\nconst finalResult = filtered.slice(0, limit).map(item => {\n    const profile = item.json;\n\n    return {\n      json: {\n        ...profile,\n        platform: profile.platform || 'telegram', \n        keyword_hashtag: profile.hashtag_name,\n        \n        short_info: `\n- username: ${profile.username}\n- channel_id: ${profile.channel_id}\n- display_name: ${profile.display_name}\n- type: ${profile.type}\n- subscribers: ${profile.subscribers}\n- created_date: ${profile.created_date}\n- is_verified: ${profile.is_verified}\n- is_scam: ${profile.is_scam}\n- is_restricted: ${profile.is_restricted}\n- is_broadcast: ${profile.is_broadcast}\n        `.trim(),\n\n        cmd: `/home/dambui/platform-scraper/venv/bin/python /home/dambui/platform-scraper/main.py telegram posts-async '${profile.username}' -l 100`\n      }\n    };\n});\n\nreturn finalResult;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        96
+      ],
+      "id": "3109659a-aa19-40a1-9208-105bccb25270",
+      "name": "Split telegram data1",
+      "executeOnce": true,
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allProfiles = [];\n\n// Lặp qua từng item đầu vào (tương ứng với từng cụm hashtag)\nfor (const item of $input.all()) {\n  const data = item.json;\n  \n  // Kiểm tra nếu có mảng profiles\n  if (data.profiles && Array.isArray(data.profiles)) {\n    data.profiles.forEach(profile => {\n      // Đưa thông tin hashtag vào từng profile để dễ quản lý sau này\n      allProfiles.push({\n        ...profile,\n        matched_hashtag_name: data.hashtag.name,\n        hashtag_platform: data.hashtag.platform\n      });\n    });\n  }\n}\n\n// Trả về danh sách profiles dưới dạng các items riêng biệt cho n8n\nreturn allProfiles.map(profile => ({ json: profile }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        96
+      ],
+      "id": "b5b06f12-663f-445a-9dbd-e9913915719c",
+      "name": "merge_profiles",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 170502168,
+          "mode": "list",
+          "cachedResultName": "Output_Data_Telegram",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=170502168"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        96
+      ],
+      "id": "681d9110-07d7-4033-9c10-a2d2003b0816",
+      "name": "retrieve existing data",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Lấy dữ liệu từ body của Webhook\nconst data = $('Webhook').item.json.body;\n\n// 2. Trích xuất các trường dữ liệu (khớp chính xác với JSON bạn gửi)\nconst raw_platforms = data[\"Platform\"] || \"\";\nconst keyword = (data[\"Từ khoá chính\"] || \"atx\").toLowerCase();\nconst limit = data[\"Limit\"] || 20;\nconst language = data[\"Language\"] || \"all\";\nconst scrape_command = \"hashtag\"; // Mặc định theo logic cũ của bạn\n\n// 3. Xử lý Platform (ép kiểu về mảng để loop)\nconst platforms = Array.isArray(raw_platforms) \n  ? raw_platforms \n  : raw_platforms.split(',').map(p => p.trim());\n\n// 4. Xử lý thời gian (Chuyển đổi định dạng DD-MM-YYYY sang Timestamp)\n// Lưu ý: JS Date hiểu chuẩn MM-DD-YYYY hoặc YYYY-MM-DD tốt hơn, \n// nhưng nếu format là DD-MM-YYYY ta cần xử lý một chút để tránh lỗi NaN.\nconst parseDate = (dateStr) => {\n  if (!dateStr) return 0;\n  const parts = dateStr.split('-');\n  if (parts.length === 3) {\n    // Chuyển DD-MM-YYYY thành YYYY-MM-DD để Date() đọc chính xác\n    return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getTime();\n  }\n  return new Date(dateStr).getTime() || 0;\n};\n\nconst start_time = parseDate(data[\"Thời gian bắt đầu\"]);\nconst end_time = parseDate(data[\"Thời gian kết thúc\"]);\n\nconst path_cmd = \"/home/dambui/platform-scraper/venv/bin/python /home/dambui/platform-scraper/main.py\";\nconst cmd = [];\n\n// 5. Vòng lặp tạo câu lệnh cho từng platform\nfor (let p of platforms) {\n  if (!p) continue;\n  p = p.toLowerCase().trim();\n  let p_cmd = null;\n\n  if (p === 'youtube') {\n    p_cmd = `${path_cmd} youtube ${scrape_command} '${keyword}' --limit ${limit} --lang '${language}' --start-time '${start_time}' --end-time '${end_time}' --no-headless`;\n  } else if (p === 'telegram') {\n    p_cmd = `${path_cmd} telegram ${scrape_command}-async '${keyword}' --limit ${limit} --lang '${language}' --start-time '${start_time}' --end-time '${end_time}' --target 'all' --no-headless`;\n  } else if (p === 'x' || p === 'twitter') {\n    p_cmd = `${path_cmd} x ${scrape_command} '${keyword}' --limit ${limit} --lang '${language}' --start-time '${start_time}' --end-time '${end_time}' --headless`;\n  }\n\n  if (p_cmd) {\n    cmd.push({ platform: p, p_cmd });\n  }\n}\n\n// 6. Trả về kết quả\nreturn [{\n  json: {\n    cmd: cmd,\n    total: cmd.length\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        432
+      ],
+      "id": "3ea6a3a1-5a40-482c-a9dc-6c68fb2dae9f",
+      "name": "cmd retrieve post"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Lấy nội dung text từ node Gemini\nconst rawText = $('Message a model').first().json.content.parts[0].text;\n\n// 2. Lấy dữ liệu từ node Webhook (Input)\nconst webhookData = $('Webhook').first().json.body;\n\n// 3. Tách chuỗi từ Gemini thành mảng các item\nlet items = rawText.split(',').map(item => ({\n  json: {\n    tu_khoa: item.trim(),\n  }\n}));\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        112
+      ],
+      "id": "5e632acf-44c5-4ac1-991e-9044835e3a35",
+      "name": "separate keywords"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Đây là thông tin:\n- Profile Info: {{ $('Loop Over Items2').item.json.bio }}\n- Data: {{ $('Check and parse data1').item.json.data !== null ? $('Check and parse data1').item.json.data.toJsonString(): \"không tìm thấy\" }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "=Bạn là chuyên gia đánh giá influencer crypto/forex. Dựa trên bảng tiêu chí dưới đây, hãy tính điểm tổng hợp cho influencer (thang điểm 0-100) và giải thích ngắn gọn. **Input là THÔNG TIN INFLUENCER** **TIÊU CHÍ ĐÁNH GIÁ:**  1. **Số lượng followers** (Thang điểm: 5/10/20)    - <500 followers: 5 điểm    - 500-5000 followers: 10 điểm    - >5000 followers: 20 điểm  2. **Lịch sử hợp tác sàn crypto** (Thang điểm: 5/10/20)    - Sàn forex: 5 điểm    - Chưa có: 10 điểm    - Đã có chia sẻ link ref: 20 điểm  3. **First day post - Thời gian bài đầu tiên** (Thang điểm: 5/10/20)    - Bài post đầu tiên < 3 tháng: 5 điểm    - Bài post đầu tiên cách 3-6 tháng: 10 điểm    - Bài post đầu tiên cách đây ≥6 tháng: 20 điểm  4. **Last post - Bài đăng gần nhất** (Thang điểm: 5/10/20)    - >4 tuần: 5 điểm    - 2-4 tuần: 10 điểm    - <1 tuần: 20 điểm  5. **Nội dung & tần suất đăng bài** (Thang điểm: 5/10/20)    - <1 bài/tuần: 5 điểm    - 1-3 bài/tuần: 10 điểm    - >3 bài/tuần: 20 điểm  6. **Phong cách nội dung** (Thang điểm: 10/20)    - Tin tức/airdrop/spot trading/longterm holding: 10 điểm    - Education/trading/signal/hoàn phí/daily trading: 20 điểm  7. **Tỷ lệ tương tác thật** (Thang điểm: 5/10/20)    - <100 react: 5 điểm    - 100-200 react: 10 điểm    - >200 react: 20 điểm  **YÊU CẦU OUTPUT (JSON):** {   \"score\": [0-120],   \"reason\": \"nhận xét ngắn về các thang điểm\" }  **CÁCH TÍNH:** - Tổng điểm tối đa: 120 - Làm tròn đến số nguyên"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        4032,
+        96
+      ],
+      "id": "7e38405e-41ef-4b14-8cf1-f22f97a0d26f",
+      "name": "Message a model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hLaCmEpDi18aodgc",
+          "name": "Google Gemini(PaLM) BingX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1377047555,
+          "mode": "list",
+          "cachedResultName": "Output_Data_Youtube",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=1377047555"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Loop Over Items2').item.json.display_name || \"\"}}",
+            "Link": "=https://www.youtube.com/{{ $('Loop Over Items2').item.json.username || \"\" }}",
+            "Summary": "={{ $('Information Extractor2').item.json.output.Summary || \"\"}}",
+            "ID": "={{ $('Loop Over Items2').item.json.channel_id }}",
+            "Date Crawl": "={{ $now.format('hh:mm dd/MM/yyyy')}}",
+            "Type": "=youtube",
+            "Date Created": "={{ $('Loop Over Items2').item.json.posted_at?.toDateTime().format('HH:mm dd/MM/yyyy') || \"01/01/2026\" }}",
+            "Referral link": "={{ $('Information Extractor2').item.json.output['referral link'] || \"\"}}",
+            "Last Post": "={{ $('Switch').first().json.data[0].url }}",
+            "Style": "={{ $('Information Extractor2').item.json.output.Style || \"\" }}",
+            "Content Language": "={{ $('Information Extractor2').item.json.output.language }}",
+            "Referral Exchange": "={{ $('Information Extractor2').item.json.output['referral exchange'] }}",
+            "First Post": "={{$('Switch').first().json.data.at(-1).url|| \"\"}}",
+            "Score": "={{\n(() => {\n  const text = $json.candidates[0]?.content?.parts[0]?.text || '';\n  const match = text.match(/```json([\\s\\S]*?)```/i);\n  if (match) {\n    return JSON.parse(match[1].trim()).score;\n  }\n  return JSON.parse(text.trim()).score;\n})()\n}}",
+            "Reason": "={{ (() => {   const text = $json.candidates[0]?.content?.parts[0]?.text || '';   const match = text.match(/```json([\\s\\S]*?)```/i);   if (match) {     return JSON.parse(match[1].trim()).score;   }   return JSON.parse(text.trim()).reason; })() }}",
+            "total views": "={{ $('Loop Over Items2').item.json.total_views || $('Loop Over Items2').item.json.views }}",
+            "subscribers": "={{ $('Loop Over Items2').item.json.subscribers || \"\" }}",
+            "total videos": "={{ $('Loop Over Items2').item.json.total_videos || \"\" }}",
+            "total likes": "={{ $('Check and parse data1').item.json.data.reduce((a, b) => a + (b.likes || 0), 0) }}",
+            "total comments": "={{ $('Check and parse data1').item.json.data.reduce((a, b) => a + (b.comments || 0), 0) }}",
+            "country": "={{ $('Loop Over Items2').item.json.country  || \"\" }}",
+            "Keyword": "={{ $('Webhook').first().json.body['Từ khoá chính'] }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "Date Crawl",
+              "displayName": "Date Crawl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date Created",
+              "displayName": "Date Created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "First Post",
+              "displayName": "First Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Post",
+              "displayName": "Last Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "subscribers",
+              "displayName": "subscribers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total videos",
+              "displayName": "total videos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total views",
+              "displayName": "total views",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total likes",
+              "displayName": "total likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total comments",
+              "displayName": "total comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Style",
+              "displayName": "Style",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Referral Exchange",
+              "displayName": "Referral Exchange",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Referral link",
+              "displayName": "Referral link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Content Language",
+              "displayName": "Content Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BD Assigned",
+              "displayName": "BD Assigned",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Contact?",
+              "displayName": "Contact?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Manual note",
+              "displayName": "Manual note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4400,
+        -112
+      ],
+      "id": "964d38e8-ae99-4783-960e-7affb29de542",
+      "name": "Append or update row in sheet tele2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.data.map(item => item.caption).join('\\n') }}\nComplete the tasks below.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Summary",
+              "description": "=Summarize the content of all posts. If there is no content, return \"No content\" and don't add anything further.\n\nIf there is content, write bullet points indicating what the group focuses on. For example: Focuses on market insights, BTC price prediction, Technical Analysis Mentions, courses/support, or private group.\n\nSummarize in 1-2 sentences, approximately 10-20 words",
+              "required": true
+            },
+            {
+              "name": "referral link",
+              "description": "=If the message contains a call to action (CTA) related to a referral link, access the message in the format https://t.me/<channel>/<message_id>, retrieve the information from  {{ $json.data.map(item => item.media_urls).join(' ') }}to view the message and provide the referral link. For example, with donglaochoicoinofficial, I see message 3600 has a CTA signal with a referral link, and as I predicted, that group has a referral link: https://accounts.binance.com/register?ref=FKAEL72N.\n\nIf it doesn't return \"Not\",\n\nDo the same and provide the post with the referral link, including all referral links.",
+              "required": true
+            },
+            {
+              "name": "language",
+              "description": "=Specifies the language of the article. It only returns the language it belongs to and doesn't specify anything else. For example: Vietnamese, Indonesian. If unknow retrun \"Multilingual\"",
+              "required": true
+            },
+            {
+              "name": "Style",
+              "description": "=Analyze the posts to determine the style of this group. If there is no content, return 'No content'.\n\nRequirements:\n\nIdentify the style: News/Airdrop/Spot trading/Longterm holding/Education/Trading/Signal/Daily trading/Spot, Future/Signal, or Rebate.\n\nSummarize the style in 1-5 words.",
+              "required": true
+            },
+            {
+              "name": "language",
+              "description": "=Specifies the language of the article. It only returns the language it belongs to and doesn't specify anything else. For example: Vietnamese, Indonesian. If unknow retrun \"Multilingual\"",
+              "required": true
+            },
+            {
+              "name": "referral exchange",
+              "description": "=Analyze the content and links from {{ $json.data.map(item => item.media_urls).join(' ') }}. If there are no referral links, return 'Not'.\n\nIf there are, extract and list the exchanges corresponding to those links (e.g., Binance, Bybit, OKX, OKX, BingX...).\n\nRequirement: Only return the list of exchange names, no further explanation.",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        3712,
+        -112
+      ],
+      "id": "1cc69f67-d55a-49a4-a37c-acf831cca826",
+      "name": "Information Extractor2",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Đây là thông tin:\n- Profile Info: {{ JSON.stringify($('Loop Over Items2').item.json) }}\n- Data: {{ $('Check and parse data1').item.json.data !== null ? $('Check and parse data1').item.json.data.toJsonString(): \"không tìm thấy\" }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "=Bạn là chuyên gia đánh giá influencer crypto/forex. Dựa trên bảng tiêu chí dưới đây, hãy tính điểm tổng hợp cho influencer (thang điểm 0-100) và giải thích ngắn gọn. **Input là THÔNG TIN INFLUENCER** **TIÊU CHÍ ĐÁNH GIÁ:**  1. **Số lượng followers** (Thang điểm: 5/10/20)    - <500 followers: 5 điểm    - 500-5000 followers: 10 điểm    - >5000 followers: 20 điểm  2. **Lịch sử hợp tác sàn crypto** (Thang điểm: 5/10/20)    - Sàn forex: 5 điểm    - Chưa có: 10 điểm    - Đã có chia sẻ link ref: 20 điểm  3. **First day post - Thời gian bài đầu tiên** (Thang điểm: 5/10/20)    - Bài post đầu tiên < 3 tháng: 5 điểm    - Bài post đầu tiên cách 3-6 tháng: 10 điểm    - Bài post đầu tiên cách đây ≥6 tháng: 20 điểm  4. **Last post - Bài đăng gần nhất** (Thang điểm: 5/10/20)    - >4 tuần: 5 điểm    - 2-4 tuần: 10 điểm    - <1 tuần: 20 điểm  5. **Nội dung & tần suất đăng bài** (Thang điểm: 5/10/20)    - <1 bài/tuần: 5 điểm    - 1-3 bài/tuần: 10 điểm    - >3 bài/tuần: 20 điểm  6. **Phong cách nội dung** (Thang điểm: 10/20)    - Tin tức/airdrop/spot trading/longterm holding: 10 điểm    - Education/trading/signal/hoàn phí/daily trading: 20 điểm  7. **Tỷ lệ tương tác thật** (Thang điểm: 5/10/20)    - <100 react: 5 điểm    - 100-200 react: 10 điểm    - >200 react: 20 điểm  **YÊU CẦU OUTPUT (JSON):** {   \"score\": [0-120],   \"reason\": \"nhận xét ngắn về các thang điểm\" }  **CÁCH TÍNH:** - Tổng điểm tối đa: 120 - Làm tròn đến số nguyên"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        4064,
+        -112
+      ],
+      "id": "f13a8fee-4a73-4175-b2ed-f6b9ea50c6cf",
+      "name": "Message a model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hLaCmEpDi18aodgc",
+          "name": "Google Gemini(PaLM) BingX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1377047555,
+          "mode": "list",
+          "cachedResultName": "Output_Data_Youtube",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=1377047555"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        -48
+      ],
+      "id": "923e2fde-b65e-441a-8df6-8d5952492683",
+      "name": "retrieve existing data1",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Lấy dữ liệu đã tồn tại từ Google Sheets để lọc trùng\nconst existingRows = $(\"retrieve existing data1\").all();\nconst existingChannelIds = new Set(existingRows.map(item => String(item.json.channel_id || item.json.ID)));\n// 2. Lấy dữ liệu mới từ node xử lý YouTube\nconst newItems = $(\"merge_profiles_youtube\").all();\n\n// 3. Lấy giá trị Limit từ Webhook (mặc định là 10)\nconst webhookData = $(\"Webhook\").first().json.body || {};\nconst limit = parseInt(webhookData.Limit) || 10;\n\n// 4. LỌC TRÙNG: Chỉ giữ lại những channel chưa có trong database\n// Sử dụng Set.has() sẽ nhanh hơn .includes() nếu danh sách sheet lớn\nlet filtered = newItems.filter(item => {\n    const channelId = String(item.json.channel_id);\n    return !existingChannelIds.has(channelId);\n});\n\n// 5. TRỘN NGẪU NHIÊN danh sách\nfiltered = filtered.sort(() => Math.random() - 0.5);\n\n// 6. CẮT DANH SÁCH và định dạng JSON\nreturn filtered.slice(0, limit).map(item => {\n    const post = item.json;\n\n    return {\n        json: {\n            ...post,\n            platform: post.platform || 'youtube',\n            keyword_hashtag: post.keyword_hashtag || '',\n            // Đã loại bỏ short_info để trả về dữ liệu JSON sạch\n            cmd: `/home/dambui/platform-scraper/venv/bin/python /home/dambui/platform-scraper/main.py youtube posts '${post.channel_id}' -l 25`\n        }\n    };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        -48
+      ],
+      "id": "51261da0-b5e8-4035-b5e7-ef8be68f9fa7",
+      "name": "Split telegram data2",
+      "executeOnce": true,
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 562309025,
+          "mode": "list",
+          "cachedResultName": "Output_Data_X",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=562309025"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1328,
+        256
+      ],
+      "id": "d295dd45-3a97-4902-8b3a-23d117f11590",
+      "name": "retrieve existing data2",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Lấy dữ liệu hiện có từ Google Sheets để tạo danh sách ID đã tồn tại\nconst existingRows = $(\"retrieve existing data2\").all();\n// Tạo Set chứa các ID/Username đã có (ép về string và trim khoảng trắng)\nconst existingIds = new Set(\n    existingRows.map(item => \n        String(item.json.channel_id || item.json.ID || item.json.username || \"\").trim()\n    )\n);\n\n// 2. Lấy dữ liệu mới từ node merge_profiles_x\nconst newItems = $(\"merge_profiles_x\").all();\n\n// 3. Lấy giá trị Limit từ Webhook (mặc định 10)\nconst webhookData = $(\"Webhook\").first().json.body || {};\nconst limit = parseInt(webhookData.Limit) || 10;\n\n// 4. LỌC TRÙNG: Chỉ giữ lại những người dùng chưa có trong database\nlet filtered = newItems.filter(item => {\n    // Ưu tiên lấy channel_id, nếu không có thì lấy username (tùy thuộc platform)\n    const currentId = String(item.json.channel_id || item.json.username || \"\").trim();\n    \n    // Nếu ID trống hoặc đã tồn tại trong Set thì loại bỏ (return false)\n    if (!currentId) return false;\n    return !existingIds.has(currentId);\n});\n\n// 5. TRỘN NGẪU NHIÊN danh sách để dữ liệu phong phú hơn\nfiltered = filtered.sort(() => Math.random() - 0.5);\n\n// 6. CẮT THEO LIMIT và định dạng kết quả trả về\nreturn filtered.slice(0, limit).map(item => {\n    const profile = item.json;\n    const platform = (profile.platform || 'youtube').toLowerCase();\n    \n    // Tự động tạo câu lệnh CMD dựa trên platform\n    let command = \"\";\n    if (platform === 'youtube') {\n        command = `/home/dambui/platform-scraper/venv/bin/python /home/dambui/platform-scraper/main.py youtube posts '${profile.channel_id}' -l 25`;\n    } else if (platform === 'x') {\n        command = `/home/dambui/platform-scraper/venv/bin/python /home/dambui/platform-scraper/main.py x posts '${profile.username}' -l 60 --headless`;\n    } else {\n        // Mặc định nếu không xác định rõ\n        command = `/home/dambui/platform-scraper/venv/bin/python /home/dambui/platform-scraper/main.py ${platform} posts '${profile.channel_id || profile.username}' -l 25`;\n    }\n\n    return {\n        json: {\n            ...profile,\n            platform: platform,\n            keyword_hashtag: profile.keyword_hashtag || '',\n            cmd: command\n        }\n    };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        256
+      ],
+      "id": "787e9c09-d0cb-4933-a381-aa81be34d932",
+      "name": "Split telegram data3",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 562309025,
+          "mode": "list",
+          "cachedResultName": "Output_Data_X",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=562309025"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "User name": "={{ $('Loop Over Items2').item.json.username }}",
+            "Date Crawl": "={{ $now.format('hh:mm dd/MM/yyyy')}}",
+            "Display name": "={{ $('Loop Over Items2').item.json.display_name }}",
+            "Link": "={{ $('Loop Over Items2').item.json.url }}",
+            "Date Created": "={{ $('Loop Over Items2').item.json.joined_date }}",
+            "Followers": "={{ $('Loop Over Items2').item.json.followers }}",
+            "Following": "={{ $('Loop Over Items2').item.json.following }}",
+            "Tweets_count": "={{ $('Loop Over Items2').item.json.tweets_count }}",
+            "Location": "={{ $('Loop Over Items2').item.json.location }}",
+            "Score": "={{ (() => {   const text = $json.candidates[0]?.content?.parts[0]?.text || '';   const match = text.match(/```json([\\s\\S]*?)```/i);   if (match) {     return JSON.parse(match[1].trim()).score;   }   return JSON.parse(text.trim()).score; })() }}",
+            "Reason": "={{ (() => {   const text = $json.candidates[0]?.content?.parts[0]?.text || '';   const match = text.match(/```json([\\s\\S]*?)```/i);   if (match) {     return JSON.parse(match[1].trim()).score;   }   return JSON.parse(text.trim()).reason; })() }}",
+            "Summary": "={{ $('Information Extractor3').item.json.output.Summary }}",
+            "Referral link": "={{ $('Information Extractor3').item.json.output[\"referral link\"] }}",
+            "Content Language": "={{ $('Information Extractor3').item.json.output.language }}",
+            "Referral Exchange": "={{ $('Information Extractor3').item.json.output[\"referral exchange\"] }}",
+            "Reacts": "={{ $('Check and parse data1').item.json.data.reduce((a, b) => a + (b.likes || 0), 0) }}",
+            "Total comments": "={{ $('Check and parse data1').item.json.data.reduce((a, b) => a + (b.replies || 0), 0) }}",
+            "Keyword": "={{ $('Webhook').first().json.body[\"Từ khoá chính\"] }}",
+            "Retweets": "={{ Math.round($node[\"Check and parse data1\"].json.data.reduce((acc, curr) => acc + (curr.retweets || 0), 0) / $node[\"Check and parse data1\"].json.data.length) }}",
+            "View": "={{ Math.round($node[\"Check and parse data1\"].json.data.reduce((acc, curr) => acc + (curr.views || 0), 0) / $node[\"Check and parse data1\"].json.data.length) }}"
+          },
+          "matchingColumns": [
+            "User name"
+          ],
+          "schema": [
+            {
+              "id": "Date Crawl",
+              "displayName": "Date Crawl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "User name",
+              "displayName": "User name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Display name",
+              "displayName": "Display name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword",
+              "displayName": "Keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date Created",
+              "displayName": "Date Created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Followers",
+              "displayName": "Followers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Following",
+              "displayName": "Following",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tweets_count",
+              "displayName": "Tweets_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Retweets",
+              "displayName": "Retweets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "View",
+              "displayName": "View",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reacts",
+              "displayName": "Reacts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total comments",
+              "displayName": "Total comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Referral Exchange",
+              "displayName": "Referral Exchange",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Referral link",
+              "displayName": "Referral link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content Language",
+              "displayName": "Content Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "BD Assigned",
+              "displayName": "BD Assigned",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Contact?",
+              "displayName": "Contact?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Manual note",
+              "displayName": "Manual note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4384,
+        416
+      ],
+      "id": "31055753-bea4-4bf7-8324-f721fc5cc691",
+      "name": "Append or update row in sheet tele3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.data.map(item => item.caption).join('\\n') }}\nComplete the tasks below.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Summary",
+              "description": "=Summarize the content of all posts. If there is no content, return \"No content\" and don't add anything further.\n\nIf there is content, write bullet points indicating what the group focuses on. For example: Focuses on market insights, BTC price prediction, Technical Analysis Mentions, courses/support, or private group.\n\nSummarize in 1-2 sentences, approximately 10-20 words",
+              "required": true
+            },
+            {
+              "name": "referral link",
+              "description": "=If the message contains a call to action (CTA) related to a referral link, access the message in the format https://t.me/<channel>/<message_id>, retrieve the information from  {{ $json.data.map(item => item.media_urls).join(' ') }}to view the message and provide the referral link. For example, with donglaochoicoinofficial, I see message 3600 has a CTA signal with a referral link, and as I predicted, that group has a referral link: https://accounts.binance.com/register?ref=FKAEL72N.\n\nIf it doesn't return \"Not\",\n\nDo the same and provide the post with the referral link, including all referral links.",
+              "required": true
+            },
+            {
+              "name": "language",
+              "description": "=Specifies the language of the article. It only returns the language it belongs to and doesn't specify anything else. For example: Vietnamese, Indonesian. If unknow retrun \"Multilingual\"",
+              "required": true
+            },
+            {
+              "name": "language",
+              "description": "=Specifies the language of the article. It only returns the language it belongs to and doesn't specify anything else. For example: Vietnamese, Indonesian. If unknow retrun \"Multilingual\"",
+              "required": true
+            },
+            {
+              "name": "referral exchange",
+              "description": "=Analyze the content and links from {{ $json.data.map(item => item.media_urls).join(' ') }}. If there are no referral links, return 'Not'.\n\nIf there are, extract and list the exchanges corresponding to those links (e.g., Binance, Bybit, OKX, OKX, BingX...).\n\nRequirement: Only return the list of exchange names, no further explanation.",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        3696,
+        416
+      ],
+      "id": "1ae8a29e-f984-498b-be73-f979f5120075",
+      "name": "Information Extractor3",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Đây là thông tin:\n- Profile Info: {{ $('Loop Over Items2').item.json.short_info }}\n- Data: {{ $('Check and parse data1').item.json.data !== null ? $('Check and parse data1').item.json.data.toJsonString(): \"không tìm thấy\" }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {
+          "systemMessage": "=Bạn là chuyên gia đánh giá influencer crypto/forex. Dựa trên bảng tiêu chí dưới đây, hãy tính điểm tổng hợp cho influencer (thang điểm 0-100) và giải thích ngắn gọn. **Input là THÔNG TIN INFLUENCER** **TIÊU CHÍ ĐÁNH GIÁ:**  1. **Số lượng followers** (Thang điểm: 5/10/20)    - <500 followers: 5 điểm    - 500-5000 followers: 10 điểm    - >5000 followers: 20 điểm  2. **Lịch sử hợp tác sàn crypto** (Thang điểm: 5/10/20)    - Sàn forex: 5 điểm    - Chưa có: 10 điểm    - Đã có chia sẻ link ref: 20 điểm  3. **First day post - Thời gian bài đầu tiên** (Thang điểm: 5/10/20)    - Bài post đầu tiên < 3 tháng: 5 điểm    - Bài post đầu tiên cách 3-6 tháng: 10 điểm    - Bài post đầu tiên cách đây ≥6 tháng: 20 điểm  4. **Last post - Bài đăng gần nhất** (Thang điểm: 5/10/20)    - >4 tuần: 5 điểm    - 2-4 tuần: 10 điểm    - <1 tuần: 20 điểm  5. **Nội dung & tần suất đăng bài** (Thang điểm: 5/10/20)    - <1 bài/tuần: 5 điểm    - 1-3 bài/tuần: 10 điểm    - >3 bài/tuần: 20 điểm  6. **Phong cách nội dung** (Thang điểm: 10/20)    - Tin tức/airdrop/spot trading/longterm holding: 10 điểm    - Education/trading/signal/hoàn phí/daily trading: 20 điểm  7. **Tỷ lệ tương tác thật** (Thang điểm: 5/10/20)    - <100 react: 5 điểm    - 100-200 react: 10 điểm    - >200 react: 20 điểm  **YÊU CẦU OUTPUT (JSON):** {   \"score\": [0-120],   \"reason\": \"nhận xét ngắn về các thang điểm\" }  **CÁCH TÍNH:** - Tổng điểm tối đa: 120 - Làm tròn đến số nguyên"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        4032,
+        416
+      ],
+      "id": "8a88b419-7ae4-45eb-9c70-94c8c09880ea",
+      "name": "Message a model5",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hLaCmEpDi18aodgc",
+          "name": "Google Gemini(PaLM) BingX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Lấy toàn bộ danh sách items từ node trước\nconst allItems = $input.all();\nconst results = [];\n\n// 2. Thử lấy Limit từ node cấu hình (nếu có)\nlet globalLimit;\ntry {\n  globalLimit = $('When Executed by Another Workflow').first().json.Limit;\n} catch (e) {\n  globalLimit = null;\n}\n\n// 3. Lặp qua từng hashtag item (ví dụ: crypto, bitcoin, v.v.)\nfor (const item of allItems) {\n  const data = item.json;\n  \n  if (!data.hashtag || !data.profiles) continue;\n\n  const keyword_hashtag = data.hashtag.display_name;\n  const platform = data.hashtag.platform;\n  const profiles = data.profiles || [];\n\n  // Xác định số lượng profile cần lấy cho hashtag này\n  const currentLimit = globalLimit || profiles.length;\n  const limitedProfiles = profiles.slice(0, currentLimit);\n\n  // 4. Biến đổi từng profile của hashtag này thành 1 item riêng biệt\n  for (const profile of limitedProfiles) {\n    results.push({\n      json: {\n        ...profile,\n        platform,\n        keyword_hashtag,\n        short_info: `\n- username: ${profile.username}\n- title: ${profile.display_name}\n- Bio: ${profile.bio || 'N/A'}\n- followers: ${profile.followers}\n- following: ${profile.following}\n- tweets_count: ${profile.tweets_count}\n- joined_date: ${profile.joined_date}\n- is_verified: ${profile.is_verified}\n        `,\n        cmd: `/home/dambui/platform-scraper/venv/bin/python /home/dambui/platform-scraper/main.py x posts '${profile.username}' -l 60 --headless`\n      }\n    });\n  }\n}\n\n// 5. Trả về toàn bộ danh sách profiles của tất cả hashtags\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        256
+      ],
+      "id": "ee02e355-5f09-4773-8e3b-bfec9152d4b8",
+      "name": "merge_profiles_x"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lấy toàn bộ dữ liệu từ node trước đó\nconst inputData = items[0].json;\n\nlet allChannels = [];\n\n// Trường hợp dữ liệu là mảng nhiều nhóm hashtag\nif (Array.isArray(inputData)) {\n  inputData.forEach(item => {\n    if (item.channels && Array.isArray(item.channels)) {\n      allChannels.push(...item.channels);\n    }\n  });\n} \n// Trường hợp dữ liệu chỉ là 1 object đơn lẻ\nelse if (inputData.channels && Array.isArray(inputData.channels)) {\n  allChannels = inputData.channels;\n}\n\n// Loại bỏ các channel trùng lặp dựa trên channel_id (nếu cần)\nconst uniqueChannels = Array.from(new Map(allChannels.map(ch => [ch.channel_id, ch])).values());\n\n// Trả về định dạng items cho n8n\nreturn uniqueChannels.map(channel => {\n  return {\n    json: channel\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        -48
+      ],
+      "id": "c6ead6f5-687a-4371-8ecb-10cbcdc11a06",
+      "name": "merge_profiles_youtube",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c",
+          "mode": "list",
+          "cachedResultName": "Crawl - combine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1036023529,
+          "mode": "list",
+          "cachedResultName": "Input_Keyword",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qrI1hddSY9UtscBp5VyQ3m2UUL0bHr8MdsAsy1dbo4c/edit#gid=1036023529"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Webhook').first().json.body.row_index }}",
+            "Status": "NONE"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Từ khoá chính",
+              "displayName": "Từ khoá chính",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Limit",
+              "displayName": "Limit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Platform",
+              "displayName": "Platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Thời gian bắt đầu",
+              "displayName": "Thời gian bắt đầu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Thời gian kết thúc",
+              "displayName": "Thời gian kết thúc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Dãy từ khoá",
+              "displayName": "Dãy từ khoá",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2256,
+        176
+      ],
+      "id": "dd2be059-d88e-4118-aa69-e3a0fc55e470",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cc1856dd-7bec-4094-8691-b4df7ccd2a46",
+              "leftValue": "={{ $json.platform }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2000,
+        96
+      ],
+      "id": "3d64b422-0a91-4848-8bf6-1dceb63eeccf",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        3872,
+        336
+      ],
+      "id": "7b770f39-f5e6-4d22-92f7-3b6c11258299",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "vAvYCEq60BXIqBOk",
+          "name": "OpenRouter account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Data": {
+      "main": [
+        [
+          {
+            "node": "Keyword",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keyword": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "separate keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Switch Single Platform1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cmd retrieve post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If CMD isvalid1": {
+      "main": [
+        [
+          {
+            "node": "Execute CMD1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute CMD1": {
+      "main": [
+        [
+          {
+            "node": "Check Error code and parse data in ouput1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Error code and parse data in ouput1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Single Platform1": {
+      "main": [
+        [
+          {
+            "node": "merge_profiles_youtube",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "merge_profiles",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "merge_profiles_x",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If not error": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute posts1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check and parse data1": {
+      "main": [
+        [
+          {
+            "node": "If not error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute posts1": {
+      "main": [
+        [
+          {
+            "node": "Check and parse data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Information Extractor1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Information Extractor3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet tele1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor1": {
+      "main": [
+        [
+          {
+            "node": "Message a model3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge_profiles": {
+      "main": [
+        [
+          {
+            "node": "retrieve existing data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "retrieve existing data": {
+      "main": [
+        [
+          {
+            "node": "Split telegram data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cmd retrieve post": {
+      "main": [
+        [
+          {
+            "node": "If CMD isvalid1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "separate keywords": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split telegram data1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Message a model3": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet tele1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor2": {
+      "main": [
+        [
+          {
+            "node": "Message a model4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model4": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet tele2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet tele2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "retrieve existing data1": {
+      "main": [
+        [
+          {
+            "node": "Split telegram data2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split telegram data2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "retrieve existing data2": {
+      "main": [
+        [
+          {
+            "node": "Split telegram data3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split telegram data3": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Information Extractor3": {
+      "main": [
+        [
+          {
+            "node": "Message a model5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model5": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet tele3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet tele3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge_profiles_x": {
+      "main": [
+        [
+          {
+            "node": "retrieve existing data2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge_profiles_youtube": {
+      "main": [
+        [
+          {
+            "node": "retrieve existing data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor2",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Information Extractor1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Information Extractor3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b972b7ab-3e26-4fbb-9059-ccb2eb4e2fd4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f5fb4061ed08960c69361f3ac140c4b4a1277c94431dab6c42e4e1cf6a2153b5"
+  },
+  "id": "AByGmzFZA1pDgPJl",
+  "tags": [
+    {
+      "updatedAt": "2026-03-31T05:23:06.023Z",
+      "createdAt": "2026-03-31T05:23:06.023Z",
+      "id": "Woh1TtmcrmVZbeQh",
+      "name": "Thủ công"
+    }
+  ]
+}

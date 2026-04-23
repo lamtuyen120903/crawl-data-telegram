@@ -1,0 +1,2845 @@
+{
+  "name": "Ana Channel",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tinalt0309--telegram-single-channel-crawler-crawl.modal.run",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "link",
+              "value": "=https://t.me/{{ $json.body.data.Username_Channel }}"
+            },
+            {
+              "name": "days",
+              "value": "={{ $json.body.data.Days }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        128,
+        0
+      ],
+      "id": "93627c5e-08ab-4993-b289-acf003562943",
+      "name": "HTTP Request",
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1_1uvyuOxI800LZqo1X55Cxya-up1KuHN07eRnp9uZsE",
+          "mode": "list",
+          "cachedResultName": "KOL contacts Crawling tool - Team Joker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_1uvyuOxI800LZqo1X55Cxya-up1KuHN07eRnp9uZsE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 377464838,
+          "mode": "list",
+          "cachedResultName": "Outpu_ChannelDatabylink",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_1uvyuOxI800LZqo1X55Cxya-up1KuHN07eRnp9uZsE/edit#gid=377464838"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('HTTP Request').first().json.data.info.id }}",
+            "Platform": "={{ $('HTTP Request').item.json.platform }}",
+            "Name": "={{ $('HTTP Request').item.json.data.info.username }}",
+            "Link": "=https://t.me/{{ $('HTTP Request').item.json.data.info.username }}",
+            "Date Created": "={{ $('HTTP Request').item.json.data.info.date.toDateTime().format('yyyy-MM-dd') }}",
+            "Reaction": "={{ Math.round($('HTTP Request').item.json.data.crawl.items.reduce((a, b) => a + (b.reaction_total || 0), 0) / $('HTTP Request').item.json.data.crawl.items.length) }}",
+            "Frequency": "={{ $('HTTP Request').item.json.data.crawl.total_items }}",
+            "View": "={{ Math.round($('HTTP Request').item.json.data.crawl.items.reduce((a, b) => a + (b.views || 0), 0) / $('HTTP Request').item.json.data.crawl.items.length) }}",
+            "Mention": "={{ $('Information Extractor').item.json.output.Mention }}",
+            "Subscribers": "={{ $('HTTP Request').item.json.data.info.participants_count }}",
+            "Date chạy": "={{ $now.format('hh:mm yyyy-MM-dd') }}",
+            "Spam": "={{ $('Information Extractor').item.json.output.Spam }}",
+            "Referral link": "={{ $('Information Extractor').item.json.output['referral link'] }}",
+            "Rreferral bingx or not": "={{ $('Information Extractor').item.json.output['referral bingx or not'] }}",
+            "Language": "={{ $('Information Extractor').item.json.output.language }}",
+            "Ref others": "={{ $json.output[\"Ref other\"] }}",
+            "Summary": "={{ $('Information Extractor').item.json.output.Summary }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "Date chạy",
+              "displayName": "Date chạy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Platform",
+              "displayName": "Platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date Created",
+              "displayName": "Date Created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Spam",
+              "displayName": "Spam",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Subscribers",
+              "displayName": "Subscribers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Frequency",
+              "displayName": "Frequency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reaction",
+              "displayName": "Reaction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "View",
+              "displayName": "View",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mention",
+              "displayName": "Mention",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rreferral bingx or not",
+              "displayName": "Rreferral bingx or not",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ref others",
+              "displayName": "Ref others",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Referral link",
+              "displayName": "Referral link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "BD",
+              "displayName": "BD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        0
+      ],
+      "id": "d9a6fd3f-a0ab-46c8-8e6a-504905e562f4",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Update lại sheet data",
+        "height": 320,
+        "width": 150
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        -160
+      ],
+      "id": "2a4af601-55d9-4fbf-a267-172729790503",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "craw-channel-link",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "4fcf4b68-3f84-4873-9310-81ca4ebf2daa",
+      "name": "Webhook",
+      "webhookId": "2e60b09d-93c6-4459-91ff-498ffe3861a3"
+    },
+    {
+      "parameters": {
+        "content": "## AI generate thông tin yêu cầu về channel",
+        "height": 320,
+        "width": 342
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -160
+      ],
+      "id": "29de2582-1c30-4b26-b543-d1108c516ec5",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        784,
+        224
+      ],
+      "id": "808516a5-38f3-4324-b728-5fa42d5c68ca",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hLaCmEpDi18aodgc",
+          "name": "Google Gemini(PaLM) BingX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## AI generate thông tin yêu cầu về channel",
+        "height": 320,
+        "width": 342
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        656,
+        -160
+      ],
+      "id": "3a838263-0703-4579-9c44-7906c6b40036",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        432,
+        224
+      ],
+      "id": "7e75c294-ed15-44dd-a045-84fe100ea30b",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hLaCmEpDi18aodgc",
+          "name": "Google Gemini(PaLM) BingX"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.data.crawl.items.map(item => item.caption).join('') }}\nComplete the tasks below.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Summary",
+              "description": "=Summarize the content of all posts. If there is no content, return \"No content\" and don't add anything further.\n\nIf there is content, write bullet points indicating what the group focuses on. For example: Focuses on market insights, BTC price prediction, Technical Analysis Mentions, courses/support, or private group.\n\nSummarize in 1-2 sentences, approximately 10-20 words",
+              "required": true
+            },
+            {
+              "name": "Mention",
+              "description": "=Does the content mentioned in the post relate to exchanges such as BingX, Bybit, MeXC, Binance, etc.?\n\nIf yes, answer yes and list the exchange mentioned without further explanation.\nIf no, simply answer \"Not\" without further explanation.",
+              "required": true
+            },
+            {
+              "name": "Spam",
+              "description": "Provide the number of articles that are unrelated to the given keywords.",
+              "required": true
+            },
+            {
+              "name": "referral link",
+              "description": "=If the message contains a call to action (CTA) related to a referral link, access the message in the format https://t.me/<channel>/<message_id>, retrieve the information from {{ $json.data.crawl.items.toJsonString() }} to view the message and provide the referral link. For example, with donglaochoicoinofficial, I see message 3600 has a CTA signal with a referral link, and as I predicted, that group has a referral link: https://accounts.binance.com/register?ref=FKAEL72N.\n\nIf it doesn't return \"Not\",\n\nDo the same and provide the post with the referral link, including all referral links.",
+              "required": true
+            },
+            {
+              "name": "referral bingx or not",
+              "description": "=If the message contains a call to action (CTA) related to a Bing X referral link, access the message in the format https://t.me/<channel>/<message_id>, retrieve the information from {{ $json.data.crawl.items.toJsonString() }} to view the message and provide the Bing X referral link. For example, with donglaochoicoinofficial, I see the message has this message: https://t.me/donglaochoicoinofficial/1426 which has a Bing X referral link: https://bingx.com/vi-vn/?ref=EAXFK2  Do the same and provide the post with the referral link.  If there is a Bing X referral link: if there is, provide the link; if not, write \"Not",
+              "required": true
+            },
+            {
+              "name": "language",
+              "description": "=Specifies the language of the article. It only returns the language it belongs to and doesn't specify anything else. For example: Vietnamese, Indonesian.\nIf unknow retrun \"Multilingual\"",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        0
+      ],
+      "id": "e5d4ee3e-f3aa-4020-b9bc-4057cac0a161",
+      "name": "Information Extractor",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output['referral link'] }}\nComplete the tasks below.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Ref other",
+              "description": "=Check if the referral links include referrals to centralized exchanges, for example, https://www.binance.com/join?ref=N8U2UQR5, which mentions Binance.\n\nOnly return centralized exchanges.\n\nIf not, return \"Not\".",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        0
+      ],
+      "id": "26b99fad-6297-43ee-8541-14d3a1925fe4",
+      "name": "Information Extractor1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1_1uvyuOxI800LZqo1X55Cxya-up1KuHN07eRnp9uZsE",
+          "mode": "list",
+          "cachedResultName": "KOL contacts Crawling tool - Team Joker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_1uvyuOxI800LZqo1X55Cxya-up1KuHN07eRnp9uZsE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1019038962,
+          "mode": "list",
+          "cachedResultName": "Input_Channellink",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_1uvyuOxI800LZqo1X55Cxya-up1KuHN07eRnp9uZsE/edit#gid=1019038962"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Username_Channel": "={{ $('Webhook').item.json.body.data.Username_Channel }}",
+            "Status": "Done"
+          },
+          "matchingColumns": [
+            "Username_Channel"
+          ],
+          "schema": [
+            {
+              "id": "Username_Channel",
+              "displayName": "Username_Channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Days",
+              "displayName": "Days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "HƯỚNG DẪN SỬ DỤNG\n1. Điền ID, Username channel cần phân tích, Days (Số ngày lấy dữ liệu tin nhắn)\n2. Chọn Công cụ > Gửi Channel Link sang n8n\n3. Data phân tích Channel sẽ gửi về Output_ChannelDatabyLink\n\nTHỜI GIAN CHẠY TOOL: 1-10 phút tùy số lượng bài đăng channel nhiều hay ít",
+              "displayName": "HƯỚNG DẪN SỬ DỤNG\n1. Điền ID, Username channel cần phân tích, Days (Số ngày lấy dữ liệu tin nhắn)\n2. Chọn Công cụ > Gửi Channel Link sang n8n\n3. Data phân tích Channel sẽ gửi về Output_ChannelDatabyLink\n\nTHỜI GIAN CHẠY TOOL: 1-10 phút tùy số lượng bài đăng channel nhiều hay ít",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "614751e4-50a3-4b08-9241-71962503f34f",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1_1uvyuOxI800LZqo1X55Cxya-up1KuHN07eRnp9uZsE",
+          "mode": "list",
+          "cachedResultName": "KOL contacts Crawling tool - Team Joker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_1uvyuOxI800LZqo1X55Cxya-up1KuHN07eRnp9uZsE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1019038962,
+          "mode": "list",
+          "cachedResultName": "Input_Channellink",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_1uvyuOxI800LZqo1X55Cxya-up1KuHN07eRnp9uZsE/edit#gid=1019038962"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Username_Channel": "={{ $('Webhook').item.json.body.data.Username_Channel }}",
+            "Status": "=Error: {{ $json.error.message }}"
+          },
+          "matchingColumns": [
+            "Username_Channel"
+          ],
+          "schema": [
+            {
+              "id": "Username_Channel",
+              "displayName": "Username_Channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Days",
+              "displayName": "Days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "HƯỚNG DẪN SỬ DỤNG\n1. Điền ID, Username channel cần phân tích, Days (Số ngày lấy dữ liệu tin nhắn)\n2. Chọn Công cụ > Gửi Channel Link sang n8n\n3. Data phân tích Channel sẽ gửi về Output_ChannelDatabyLink\n\nTHỜI GIAN CHẠY TOOL: 1-10 phút tùy số lượng bài đăng channel nhiều hay ít",
+              "displayName": "HƯỚNG DẪN SỬ DỤNG\n1. Điền ID, Username channel cần phân tích, Days (Số ngày lấy dữ liệu tin nhắn)\n2. Chọn Công cụ > Gửi Channel Link sang n8n\n3. Data phân tích Channel sẽ gửi về Output_ChannelDatabyLink\n\nTHỜI GIAN CHẠY TOOL: 1-10 phút tùy số lượng bài đăng channel nhiều hay ít",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        192
+      ],
+      "id": "aa53e7f8-e1fe-487f-b0ee-4552e193caea",
+      "name": "Append or update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DvK9TCx0cmptLk1L",
+          "name": "Google Sheets account 6"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "x-forwarded-for": "2405:4803:c60e:e4f0:6414:dbde:530:d6c2, 107.178.203.195",
+            "host": "n8n.cntresearch.com",
+            "x-nginx-proxy": "true",
+            "connection": "upgrade",
+            "content-length": "458",
+            "content-type": "application/json",
+            "user-agent": "Mozilla/5.0 (compatible; Google-Apps-Script; beanserver; +https://script.google.com; id: UAEmdDd-5b1a7KKmo7tGyEWXnFbNbyZRPbQ)",
+            "accept-encoding": "gzip, deflate, br"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "row_index": 11,
+            "sent_at": "11:43:13 13/3/2026",
+            "data": {
+              "Username_Channel": "kriptoxeyal",
+              "Days": 30,
+              "Status": "",
+              "HƯỚNG DẪN SỬ DỤNG\n1. Điền ID, Username channel cần phân tích, Days (Số ngày lấy dữ liệu tin nhắn)\n2. Chọn Công cụ > Gửi Channel Link sang n8n\n3. Data phân tích Channel sẽ gửi về Output_ChannelDatabyLink\n\nTHỜI GIAN CHẠY TOOL: 1-10 phút tùy số lượng bài đăng channel nhiều hay ít": ""
+            }
+          },
+          "webhookUrl": "https://n8n.cntresearch.com/webhook/craw-channel-link",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "HTTP Request": [
+      {
+        "json": {
+          "platform": "telegram",
+          "type": "single_channel_crawl",
+          "input_link": "https://t.me/kriptoxeyal",
+          "data": {
+            "info": {
+              "platform": "telegram",
+              "type": "channel_details",
+              "id": 1566429812,
+              "title": "Kripto Xəyal",
+              "username": "kriptoxeyal",
+              "date": "2022-02-18T19:33:34+00:00",
+              "verified": false,
+              "about": "📍 Kriptovalyuta bazarı haqqında analizlər və şəxsi görüşlər.\n\nVIP Community üçün @kriptoxeyalofficial\n\nYoutube: Kripto Xəyal\n\nPaylaşımlar yatırım tövsiyyəsi deyil.\n\n\n■ Əlaqə üçün: @kriptoxeyalofficia",
+              "participants_count": 1554
+            },
+            "crawl": {
+              "platform": "telegram",
+              "type": "crawl",
+              "channel": "kriptoxeyal",
+              "from_date": "2026-02-11T05:59:41.891341+00:00",
+              "total_items": 144,
+              "items": [
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9659,
+                  "caption": "Bugün bizə təsir edəcək əsas datalar:\n\nABŞ İşsizlər üçün İddialar\n(Gözlənilən: 214K - Əvvəlki: 213K)\n\n🟢 Datalar GÖZLƏNİLƏNDƏN ÇOX YUXARI (>214K) olarsa\n\nDollar (DXY): Dəyərini itirəcək (🔻).\nKripto: Müsbət (🚀).\nFond Bazarı: Müsbət (🚀).\nQızıl: Müsbət (🚀).\n\n🔴 Datalar GÖZLƏNİLƏNDƏN ÇOX AŞAĞI olarsa (<214K)\n\nDollar (DXY): Güclənəcək/artacaq (🔺).\nKripto: Mənfi  (🔻).\nFond Bazarı: Mənfi (🔻).\nQızıl: Mənfi (🔻).",
+                  "date": "2026-03-12T11:29:57+00:00",
+                  "views": 179,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9659",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9658,
+                  "caption": "Bu dəstək qırılsa, rahatlayarıq",
+                  "date": "2026-03-12T09:28:25+00:00",
+                  "views": 194,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9658",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9658"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9657,
+                  "caption": "Dəyişən nəsə yoxdur qrafiklərdə. Davam",
+                  "date": "2026-03-12T09:27:28+00:00",
+                  "views": 188,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9657",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9657"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9655,
+                  "caption": "(İQİ) 2.4% olaraq açıqlandı.\n\nTəxmini: 2.4% | Əvvəlki: 2.4%\n\nMəlumatlar gözləntilərə uyğun gəldi ki, bu da bizim üçün yaxşıdır.",
+                  "date": "2026-03-11T12:45:47+00:00",
+                  "views": 247,
+                  "forwards": 0,
+                  "replies": 3,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9655",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9654,
+                  "caption": "Bu gün saat 16:30-da data var. Amerikada yay vaxtına keçid başladı, indi hər şey bir saat tez olacaq.\n\nABŞ İstehlak Qiymətləri İndeksi (CPI) (Aylıq) (Fevral)\n(Gözlənilən: 0,3% - Əvvəlki: 0,2%)\n\nƏgər data gözləniləndən aşağı gəlirsə (<0,3%)\n\nDollar (DXY): Ucuzlaşacaq (🔻).\nKripto: Müsbət (🚀).\nBirja: Müsbət (🚀).\nQızıl: Müsbət (🚀).\n\n🔴 Data gözləniləndən çox olarsa (>0,3%)\n\nDollar (DXY): Gücləndirəcək/Artım (🔺).\nKripto: Mənfi (🔻).\nBirja: Mənfi (🔻).\nQızıl: Mənfi (🔻).\n\nİllik məlumatlarımız əslində eynidir; cari inflyasiya səviyyəsi bu fevral rəqəmlərindən keçən ilin fevral rəqəmləri çıxılaraq hesablanacaq və onun yüksək və ya aşağı olmasından asılı olmayaraq, təsir baxımından nəticə eyni olacaq.",
+                  "date": "2026-03-11T09:14:10+00:00",
+                  "views": 254,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9654",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9653,
+                  "caption": "Bitcoin dominantlıq da bu müqavimətdən rədd yesə, altcoinlər rahat nəfəs alar.",
+                  "date": "2026-03-11T09:10:55+00:00",
+                  "views": 216,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9653",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9653"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9652,
+                  "caption": "Dəstəyi qırsa, əla",
+                  "date": "2026-03-11T09:09:36+00:00",
+                  "views": 204,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9652",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9652"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9651,
+                  "caption": "ETH üçün də vəziyyət pis deyil",
+                  "date": "2026-03-11T09:08:24+00:00",
+                  "views": 211,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9651",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9651"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9650,
+                  "caption": "Bitcoin dəstəkdədir, buradan yuxarı getməsi istəyimizdir.",
+                  "date": "2026-03-11T09:07:51+00:00",
+                  "views": 217,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9650",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9650"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9649,
+                  "caption": "1000 dollarlıq balansda 11% gəlir",
+                  "date": "2026-03-10T17:12:07+00:00",
+                  "views": 281,
+                  "forwards": 0,
+                  "replies": 4,
+                  "reaction_total": 11,
+                  "message_link": "https://t.me/kriptoxeyal/9649",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9648,
+                  "caption": "FOREX 📊\n9 mart - 20 dollar✅\n10 mart - 90 dollar ✅\nToplam - 110💲\n\n2 günün nəticəsi🤝",
+                  "date": "2026-03-10T17:11:49+00:00",
+                  "views": 289,
+                  "forwards": 0,
+                  "replies": 4,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9648",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9647,
+                  "caption": "",
+                  "date": "2026-03-10T08:26:08+00:00",
+                  "views": 308,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9647",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9647"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9646,
+                  "caption": "Dünən canlıda dediklərim reallaşmağa davam edir🤝",
+                  "date": "2026-03-10T08:26:08+00:00",
+                  "views": 316,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9646",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9646"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9645,
+                  "caption": "Səsvermə nə üçün idi, bu qədər projeksioyn nə üçün idi, hər şeyi pulsuz edəndə yəqin ki, dəyər görmürük. Bu millətə yaxşılıq yaramır, 100 nəfərdən cəmi 3 nəfər qatılır canlıya)) Sonra deyəndə ki, mən çoxam bura inanmırlar)",
+                  "date": "2026-03-09T18:32:33+00:00",
+                  "views": 320,
+                  "forwards": 0,
+                  "replies": 4,
+                  "reaction_total": 1,
+                  "message_link": "https://t.me/kriptoxeyal/9645",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9644,
+                  "caption": "https://www.youtube.com/live/atqfQrPV7BQ?si=9UJ0Vryt_yhIK3Xj",
+                  "date": "2026-03-09T18:04:04+00:00",
+                  "views": 319,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9644",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9644"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9642,
+                  "caption": "BAŞLADIIQQQQ",
+                  "date": "2026-03-09T18:01:40+00:00",
+                  "views": 299,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9642",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9641,
+                  "caption": "https://youtube.com/channel/UC73NUms2MsMfUBXYpYwuYdg?si=N8pUmD3GqCZ0RvER\n\n\n1 saata canlıdayıq🙌",
+                  "date": "2026-03-09T16:54:43+00:00",
+                  "views": 294,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9641",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9640,
+                  "caption": "Bunu etməyi unutmayın. Ramazan bitənə qədər keçərlidir. Mərhələləri keçdikdən sonra yarış bitdikdə çəkilə bilən pullarınız hesabınıza köçəcək. Baxın, bunlar hamısı sizin üçündür. Sizə görə anlaşıram.",
+                  "date": "2026-03-09T09:17:56+00:00",
+                  "views": 303,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9640",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9639,
+                  "caption": "Forex qazanc 📊\n3 mart - 27.2 dollar✅\n4 mart -  40 dollar✅\n5 mart - 10 dollar ✅\n6 mart - 10 dollar ✅ \nToplam - 87.2 dollar 💲\n\nÖtən həftənin Tradfi qazancı 1000 dollar balansa görə. Qrupa giriş şərti sadəcə bitget referalından keçib kyc etməyinizdir. Zatən pozisyaları bu birja üzərindən veririk.",
+                  "date": "2026-03-09T09:06:38+00:00",
+                  "views": 299,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 10,
+                  "message_link": "https://t.me/kriptoxeyal/9639",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9638,
+                  "caption": "Bu gün 22.00 canlımız var, unutmayın",
+                  "date": "2026-03-09T06:33:58+00:00",
+                  "views": 300,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9638",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9637,
+                  "caption": "",
+                  "date": "2026-03-09T06:16:03+00:00",
+                  "views": 289,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9637",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9637"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9636,
+                  "caption": "",
+                  "date": "2026-03-09T06:16:03+00:00",
+                  "views": 293,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9636",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9636"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9635,
+                  "caption": "Sabahlar xeyir dostlar,\n\nBitcoin və Ethereum dəstək qırmadığı müddətcə, Usdt dominantlıq da müqavimət qırmadığı müddətcə, bazardan yüksəliş gözləyirəm.",
+                  "date": "2026-03-09T06:16:03+00:00",
+                  "views": 294,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9635",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9635"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9634,
+                  "caption": "Kanalımızın xanım üzvlərini 8 Mart Beynəlxalq Qadınlar günü münasibətilə təbrik edirəm🙏\n\nÜzünüzdən gülüşünüz, cibinizdən pulunuz, bədəninizdən sağlamlığınız, ruhunuzdan sakitliyiniz əskik olmasın.\n\nUnutmayın, sizlər bu dünyanın istiqamət verənlərisiz. Kişilər ağıllı olub dünyanı idarə edə bilər, amma siz də kişiləri idarə edirsiz :)\n\nDaim öz ayaqlarınız üzərində dura bilməyinizi, haqqınızı tələb edə bilməyinizi və istədiyiniz firavan həyatı yaşaya bilməyinizi arzu edirəm. Bu dünyadakı ən xoşbəxt qadın heç kimə möhtac olmayan və öz ayaqları üzərində dura bilən qadındı.\n\nYaxşı ki, varsız,nə deyək❤️🫂",
+                  "date": "2026-03-08T08:02:26+00:00",
+                  "views": 326,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 21,
+                  "message_link": "https://t.me/kriptoxeyal/9634",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9633,
+                  "caption": "İndi mən bu səsvermənin nəticəsini necə dəyərləndirim😂\n\nSaat 22.00 hamı üçün uyğundu məncə🤝\n\n1-ci gündən başlayırıq 🙌",
+                  "date": "2026-03-07T15:17:33+00:00",
+                  "views": 339,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 13,
+                  "message_link": "https://t.me/kriptoxeyal/9633",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9632,
+                  "caption": "",
+                  "date": "2026-03-06T19:47:51+00:00",
+                  "views": 375,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9632",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9632"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9631,
+                  "caption": "Dəstəkləri qırmağımız xoş olmadı. Retest edib yoxlayanda stop olmağı düşünəcəm",
+                  "date": "2026-03-06T19:47:51+00:00",
+                  "views": 368,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9631",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9631"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9630,
+                  "caption": "ABŞ-ın Kənd Təsərrüfatı ilə Bağlı Əmək Haqqı (Fevral) -92K səviyyəsində bildirilib.\n\nGözlənti: 58K\nƏvvəlki: 130K",
+                  "date": "2026-03-06T13:31:07+00:00",
+                  "views": 385,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9630",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9629,
+                  "caption": "ABŞ-ın Kənd Təsərrüfatı Əmək Haqqı (Fevral)\n(Gözlənilən: 58K - Əvvəlki: 130K)\n\n🟢 Datalar GÖZLƏNİLƏNDƏN AŞAĞI (<58K) olarsa\nDollar (DXY): Dəyərini itirəcək (🔻).\nKripto: Müsbət (🚀).\nSəhm: Müsbət (🚀).\nQızıl: Müsbət (🚀).\n\n🔴 Datalar GÖZLƏNİLƏNDƏN YUXARI (>58K) olarsa\nDollar (DXY): Güclənəcək/artacaq (🔺).\nKripto: Mənfi (🔻).\nSəhm: Mənfi (🔻).\nQızıl: Mənfi (🔻).\n\nABŞ İşsizlik Səviyyəsi (Fevral)\n(Gözlənilən: 4.3% - Əvvəlki: 4.3%)\n\n🟢 Datalar GÖZLƏNİLƏNDƏN ÇOX YUXARI (>4.3%) olarsa\nDollar (DXY): Dəyərini itirəcək (🔻).\nKripto: Müsbət (🚀).\nSəhm: Müsbət (🚀).\nQızıl: Müsbət (🚀).\n\n🔴 Datalar GÖZLƏNİLƏNDƏN ÇOX AŞAĞI olarsa (<4.3%)\nDollar (DXY): Güclənəcək/artacaq (🔺).\nKripto: Mənfi (🔻).\nSəhm: Mənfi (🔻).\nQızıl: Mənfi (🔻).\n\nBu gün bizə təsir edəcək datalar.",
+                  "date": "2026-03-06T11:18:16+00:00",
+                  "views": 411,
+                  "forwards": 2,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9629",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9628,
+                  "caption": "Ethereum da həmçinin",
+                  "date": "2026-03-06T08:22:32+00:00",
+                  "views": 336,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9628",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9628"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9627,
+                  "caption": "Trendimizi qoruyuruq, problem yoxdu",
+                  "date": "2026-03-06T08:22:01+00:00",
+                  "views": 351,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9627",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9627"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9626,
+                  "caption": "Səs vermə davam edir🤝",
+                  "date": "2026-03-06T07:34:21+00:00",
+                  "views": 328,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9626",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9625,
+                  "caption": "WEEX hədiyyələri tədbir bitimində gələcək🤝",
+                  "date": "2026-03-05T18:53:09+00:00",
+                  "views": 364,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9625",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9622,
+                  "caption": "Danışmaq istəməyənlər chata yaza bilər sualları🤝",
+                  "date": "2026-03-05T17:32:24+00:00",
+                  "views": 399,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9622",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9621,
+                  "caption": "Başladıq🙌",
+                  "date": "2026-03-05T17:31:04+00:00",
+                  "views": 405,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9621",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9619,
+                  "caption": "Və ona qədər də sizlərə yeni təqdim etdiyimiz sayta girin edin baxın.\n\nNə görmək istəyirsiz deyin, sizin üçün inkişaf etdirək💪\n\nesfx.az",
+                  "date": "2026-03-05T17:18:04+00:00",
+                  "views": 417,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 6,
+                  "message_link": "https://t.me/kriptoxeyal/9619",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9618,
+                  "caption": "Yenilikləri danışacağıq",
+                  "date": "2026-03-05T17:17:14+00:00",
+                  "views": 354,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9618",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9616,
+                  "caption": "21.30 telegram üzərindən canlı olacaq🤝",
+                  "date": "2026-03-05T17:15:30+00:00",
+                  "views": 334,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9616",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9615,
+                  "caption": "Güclü rəqabət var. Sabaha qədər davam etsin bu anket🤝",
+                  "date": "2026-03-05T14:31:16+00:00",
+                  "views": 328,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9615",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9614,
+                  "caption": "İşsizlik müavinəti üçün müraciətlərin sayı 213 min olaraq elan edildi.\n\n(Gözlənilən: 215 min, Əvvəlki: 212 min)\n\nGözlənilənlərdən aşağıdır, lakin əhəmiyyətli təsir göstərəcək səviyyədə deyil.",
+                  "date": "2026-03-05T13:37:48+00:00",
+                  "views": 342,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9614",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9613,
+                  "caption": "3 dəqiqəyə datalarımız var\n\nABŞ İşsizlik Müavinəti müraciəti\n(Gözlənilən: 215K - Əvvəlki: 212K)\n\n🟢 Datalar GÖZLƏNİLƏNDƏN ÇOX YÜKSƏK (>215K) Gələrsə\n\nDollar (DXY): Dəyərsizləşəcək (🔻).\nKripto: Müsbət (🚀).\nSəhm: Müsbət (🚀).\nQızıl: Müsbət (🚀).\n\n🔴 Datalar GÖZLƏNİLƏNDƏN ÇOX AŞAĞI Gələrsə (<215K)\n\nDollar (DXY): Güclənəcək, Artacaq (🔺).\nKripto: Mənfi (🔻).\nSəhm: Mənfi (🔻).\nQızıl: Mənfi (🔻).",
+                  "date": "2026-03-05T13:27:38+00:00",
+                  "views": 356,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9613",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9611,
+                  "caption": "",
+                  "date": "2026-03-05T10:39:34+00:00",
+                  "views": 336,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9611",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9610,
+                  "caption": "Zəhmət olmasa aktiv olaq. Hamısı sizin üçündü🙏",
+                  "date": "2026-03-05T09:41:04+00:00",
+                  "views": 345,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9610",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9608,
+                  "caption": "",
+                  "date": "2026-03-05T09:22:17+00:00",
+                  "views": 336,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 1,
+                  "message_link": "https://t.me/kriptoxeyal/9608",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9607,
+                  "caption": "Siz ETH alın növbəti müqavimətə kimi, mən də yemək yeyim, sonra aşağıda görüşək.\n\nSabah canlı yayımımız var axşam.\n\nHƏR ŞEY QALDIĞI YERDƏN DAHA MÖHTƏŞƏM FORMADA BAŞLAYACAQ!",
+                  "date": "2026-03-04T20:22:43+00:00",
+                  "views": 344,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9607",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9607"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9606,
+                  "caption": "",
+                  "date": "2026-03-04T20:22:43+00:00",
+                  "views": 339,
+                  "forwards": 1,
+                  "replies": 2,
+                  "reaction_total": 6,
+                  "message_link": "https://t.me/kriptoxeyal/9606",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9606"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9605,
+                  "caption": "Hər şey üçün sadəcə zaman lazımdır. Analiz özünü doğruldacaq🤝",
+                  "date": "2026-03-04T18:24:17+00:00",
+                  "views": 349,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9605",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9605"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9604,
+                  "caption": "",
+                  "date": "2026-03-04T17:24:18+00:00",
+                  "views": 321,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9604",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9604"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9603,
+                  "caption": "Dediyimi etdiniz ümid edirəm. Birazdan yenə uçacam☹️",
+                  "date": "2026-03-04T17:24:18+00:00",
+                  "views": 336,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9603",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9603"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9602,
+                  "caption": "Kimin gözü dəydi yarım saat təxirə salındı",
+                  "date": "2026-03-04T15:14:16+00:00",
+                  "views": 320,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9602",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9601,
+                  "caption": "ABŞ S&P Qlobal PMI Məlumatları 18:45-də açıqlandı\n\nXidmətlər PMI (Fevral): 51.7 (Əvvəlki: 52.3)\n\nMürəkkəb PMI (Fevral): 51.9 (Əvvəlki: 52.3)\n\nGözləntilərin altında, lakin neytral adlandıra biləcəyimiz bir göstəricidir.",
+                  "date": "2026-03-04T14:53:42+00:00",
+                  "views": 338,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9601",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9600,
+                  "caption": "Mən birazdan yenə uçuram. Siz 73k-da yarısını satıb girişə stop qoyun. Nə olar nə olmaz. Gecə baxarıq vəziyyətə alındırsam🫂",
+                  "date": "2026-03-04T14:44:20+00:00",
+                  "views": 326,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 6,
+                  "message_link": "https://t.me/kriptoxeyal/9600",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9600"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9599,
+                  "caption": "ABŞ ADP Qeyri-Kənd Təsərrüfatı Əmək Haqqı\n(Gözlənilən: 50K)\n\n🟢 Datalar GÖZLƏNİLƏNDƏN AŞAĞI (<50K) olarsa\nDollar (DXY): Dəyərini itirəcək (🔻).\nKripto: Müsbət (🚀).\nSəhm: Müsbət (🚀).\nQızıl: Müsbət (🚀).\n\n🔴 Datalar GÖZLƏNİLƏNDƏN YUXARI (>50K) olarsa\nDollar (DXY): Güclənəcək/artacaq (🔺).\nKripto: Mənfi  (🔻).\nSəhm: Mənfi (🔻).\nQızıl: Mənfi (🔻).\n\nABŞ Xidmətləri PMI (Satınalma Menecerləri İndeksi)\n(Gözlənilən: 52.3)\n\nPMI məlumatlarında əsas göstərici 50-dir. 50-dən yuxarı dəyər sektorda artımı, 50-dən aşağı dəyər isə daralmanı göstərir. Bununla belə, bazar həmişə qiymətlərini gözləntilərə (proqnozlara) əsaslandırır.\n\n🟢 Datalar GÖZLƏNİLƏNDƏN AŞAĞI GƏLİRSƏ (<52.3)\nDollar (DXY): Dəyərini itirəcək (🔻).\nKripto: Müsbət (🚀).\nFond Bazarı: Müsbət (🚀).\nQızıl: Müsbət (🚀).\n\n🔴 Datalar GÖZLƏNİLƏNDƏN YUXARI GƏLİRSƏ (>52.3)\nDollar (DXY): Güclənəcək/artacaq (🔺).\nKripto: Mənfi (🔻).\nFond Bazarı: Mənfi (🔻).\nQızıl: Mənfi (🔻).\n\n\"Bej\" kitabı saat 23:00-da açıqlanacaq.",
+                  "date": "2026-03-04T12:34:22+00:00",
+                  "views": 334,
+                  "forwards": 3,
+                  "replies": 1,
+                  "reaction_total": 10,
+                  "message_link": "https://t.me/kriptoxeyal/9599",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9598,
+                  "caption": "Axır ki, keçdi🤝",
+                  "date": "2026-03-04T09:27:58+00:00",
+                  "views": 334,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9598",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9598"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9597,
+                  "caption": "ESFX VIP COMMUNITY\n\nTRADFI QAZANCI (1000$-A ƏSASƏN)\n16 fevral - 26 fevral \nToplam qazanc  261.61 dollar\n\n 27 fevral - 3 mart \nToplam qazanc 136.5 dollar\n\nÖDƏNİŞSİZ SADƏCƏ BU LİNKLƏ QEYDİYATDAN KEÇƏRƏK QOŞULA BİLƏRSİZ.\n\nhttps://partner.bitget.fit/bg/37UJQS\n\nSual olarsa @esfx_admin əlaqə saxlayın",
+                  "date": "2026-03-03T11:12:23+00:00",
+                  "views": 335,
+                  "forwards": 1,
+                  "replies": 3,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9597",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9597"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9596,
+                  "caption": "WEEX-ə mütləq qoşulun və pulunuzu götürün. Bundan sonra sizlər üçün belə kompaniyalara qoşulacam və fayda verməyə çalışacam🙏",
+                  "date": "2026-03-03T07:05:47+00:00",
+                  "views": 337,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9596",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9595,
+                  "caption": "",
+                  "date": "2026-03-03T07:04:41+00:00",
+                  "views": 339,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9595",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9595"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9594,
+                  "caption": "",
+                  "date": "2026-03-03T07:04:41+00:00",
+                  "views": 335,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9594",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9594"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9593,
+                  "caption": "Məncə, niyə satdığım bəlli oldu🤝",
+                  "date": "2026-03-03T07:04:41+00:00",
+                  "views": 328,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9593",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9593"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9592,
+                  "caption": "",
+                  "date": "2026-03-02T17:52:29+00:00",
+                  "views": 329,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9592",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9592"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9591,
+                  "caption": "",
+                  "date": "2026-03-02T17:52:29+00:00",
+                  "views": 348,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9591",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9591"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9590,
+                  "caption": "BTC və ETH satıram. USDT dominantlıq dəstəkdədir. Ehtiyatlı olmaqda fayda var. Qəşəng qazandıq🙏",
+                  "date": "2026-03-02T17:52:29+00:00",
+                  "views": 332,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9590",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9590"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9589,
+                  "caption": "Keç buranı, 73k gəlsin. Əlimizdə Bitcoin və Ethereum var.",
+                  "date": "2026-03-02T16:10:53+00:00",
+                  "views": 342,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9589",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9589"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9588,
+                  "caption": "ABŞ İstehsal PMI-i açıqlandı\n\nAçıqlanan: 52.4\nGözlənilən: 51.7\nƏvvəlki: 52.6",
+                  "date": "2026-03-02T15:18:55+00:00",
+                  "views": 327,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9588",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9587,
+                  "caption": "Bu gün bizə təsir edəcək əsas data PMI (Satınalma Menecerləri İndeksi)\n\nPMI məlumatlarında hazırki göstərici 50-dir. 50-dən yuxarı göstərici sektorda artımı, 50-dən aşağı göstərici isə daralmanı göstərir. Bununla belə, bazar həmişə hadisələri gözləntilərə (proqnozlara) əsasən qiymətləndirir.\n\nABŞ PMI (Satınalma Menecerləri İndeksi)\n🟢 Əgər məlumatlar GÖZLƏNİLƏNDƏN AŞAĞI olarsa\n\nDollar (DXY): Dəyərsizləşəcək (🔻).\nKripto: Müsbət (🚀).\nSəhm: Müsbət (🚀).\nQızıl: Müsbət (🚀).\n\n🔴 Məlumatlar GÖZLƏNİLƏNDƏN DAHA YÜKSƏK olarsa \nDollar (DXY): Güclənir/Artır (🔺).\nKripto: Mənfi (Satış mövqeyi) (🔻).\nSəhm: Mənfi (🔻).\nQızıl: Mənfi (🔻).",
+                  "date": "2026-03-02T12:12:25+00:00",
+                  "views": 360,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9587",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9585,
+                  "caption": "Ramazan kampaniyası 3 mərhələdən ibarətdir:\n\n1. Yeni İstifadəçilər üçün Zəmanətli Qazanc\n\nBu, izləyicilər üçün ən cəlbedici, risksiz və aydın təklifdir:\n\nŞərt: WEEX-də yeni üzv kimi qeydiyyatdan keçin, hesabınıza ən azı 100 USDT yatırın və ümumilikdə 100 USDT məbləğində hər hansı bir əməliyyat (alış/satış) edin.\n\nMükafat: 15 USDT xalis nağd mükafat, birbaşa cüzdanınıza çıxarıla bilər.\n\n2. Tədbir: Gündəlik Fyuçers Ticarət Tapşırığı (İlk 1000 İstifadəçi)\n\nİstifadəçilər hər gün birjaya daxil olmalı və ən azı 1000 USDT ticarət həcminə çatmalıdırlar.\n\nŞərt: Ramazan ayı ərzində hər gün fyuçers ticarətində ən azı 1000 USDT ticarət həcminə çatmalıdırlar. Bu qayda sıfır komissiyalı cütlüklərə şamil edilmir.\n\nMükafat: Seriyanın davam etdiyi günlərin sayına əsasən WXT Token mükafatlarının artırılması. (Məsələn; ardıcıl 2 gün ərzində tamamlamaq üçün 150 WXT, ardıcıl 10 gün ərzində tamamlamaq üçün 2000-3000 WXT). Mükafatlar kümülatif deyil; yalnız tədbirin sonunda əldə edilən ən yüksək səviyyə üçün mükafat alınır və tələblərə cavab verən ilk 1000 nəfərlə məhdudlaşır. Erkən iştirak vacibdir.\n\nArtıq aktiv ticarət edən izləyicilər üçün bunlar əlavə gəlir imkanlarıdır:\n\nİftar və İmsak Sürprizi: Bu saatlar ərzində 3000 USDT ticarət həcminə nail olanlar arasından gündəlik seçilən 10 nəfər hədiyyə olaraq 1-5 USDT alacaq.\n\nAirdrops: Kampaniya zamanı müntəzəm olaraq fyuçers ticarəti edən istifadəçilər ticarət həcmlərinə əsasən SUI, DOGE, XRP, PEPE və SOL kimi təsadüfi məşhur sikkələri airdrop olaraq alacaqlar.\n\n3-cü Tədbir: Ticarət Yarışması\n\nBütün iştirakçıların ümumi ticarət həcminə əsasən kilidini açmaqla artan 20.000 dollarlıq mükafat fondu. Bu mərhələdəki bütün mükafatlar USDT çıxarıla bilən şəkildə göndərilir.\n\nBütün iştirakçıların ümumi ticarət həcmi 10 milyon dolları keçərsə, hovuz 200 USDT olur.\n\nHəcm 50 milyon dolları keçərsə, hovuz 1000 USDT olur.\n\nHəcm 100 milyon dolları keçərsə, hovuz 2000 USDT olur.\n\nƏn yüksək 20.000 USDT hovuzunu açmaq üçün bütün iştirakçılar 1 milyard dollar (1.000.000.000 USDT) ümumi ticarət həcmi yaratmalıdırlar.\n\nİstifadəçilər yarışa qoşulmaq üçün \"Qeydiyyatdan keç\" düyməsini basdıqdan sonra onların bütün əməliyyatları sayılacaq. Kampaniyanın sonunda (13 mart) səhifənin altındakı \"Reytinq Cədvəli\" nəzərdən keçiriləcək. Ən yüksək ticarət həcminə malik olanlar (ən çox alış/satış əməliyyatları) hazırda açıq olan mükafat hovuzundan paylarını alacaqlar (məsələn, hovuz 4000 dollar səviyyəsində qalarsa).\n\nİstifadəçilər səhifəyə daxil olduqdan sonra statistikalarına baxa bilərlər:\n\nTicarət Həcmi: Həmin vaxta qədər başa vurduqları alqı-satqı əməliyyatlarının ümumi məbləği.\n\nRütbə: Digər rəqiblərlə müqayisədə onların reytinqi.\n\nMükafatlar: Kampaniya həmin anda bitsəydi, qazanacaqları təxmini mükafat məbləğini göstərir.",
+                  "date": "2026-03-02T08:30:08+00:00",
+                  "views": 354,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9585",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9584,
+                  "caption": "Buna qoşulun və faydalanın. Pulunuzu götürün🤝",
+                  "date": "2026-03-02T08:27:08+00:00",
+                  "views": 321,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9584",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9583,
+                  "caption": "🌙 WEEX-də Ramazan ayının nemətləri\n💰 Gündəlik Mükafatlar, Gündəlik Airdrops | WEEX-də Ramazan Fərqlidir\n\nWEEX Global, Ramazan ayı ərzində birdən çox mükafat səviyyəsinin eyni anda açıldığı xüsusi tədbirini başlatdı.\n\n30.000 USDT mükafat hovuzunda paylaşarkən, tapşırıq mükafatları toplaya, iftar və imsak saatları arasında sürpriz qazanclarda iştirak edə və gündəlik təsadüfi populyar token airdroplarından pay almaq şansınız var.\n\n ✨ Əsas məqamlar\n🏆 20.000 USDT Ticarət Müsabiqəsi\n🎁 Yeni İstifadəçilər üçün Xüsusi 15 USDT Çıxarıla Bilən Bonus\n\n→ 100 USDT Depozit + 100 USDT Ticarət\n🎁 2.000 USDT Sürpriz Bonus Hovuzu\n→ ≥1.000 USDT Ticarət edin və Əlavə Mükafat Hovuzundan Payınızı Əldə Edin\n🌙 İftardan imsaka Şans Mükafatları\n→ ≥3.000 USDT ticarət həcmi | Hər gün 1-5 USDT-dən 10 nəfərə qədər\n💎 Ramazan Paylaşarkən Gözəldir\n\nGündəlik Həcminizə Əsaslanan Təsadüfi Populyar Token Airdropları🚀\n💡 Ramazan ayında WEEX-də onlayn olmaq belə faydalıdır!\n🗓 Tədbirin Müddəti: 27 Fevral – 13 Mart\n\n🔎 Ətraflı məlumat və qeydiyyat üçün: https://www.weex.com/events/promo/ramadanbless?vipCode=aguj",
+                  "date": "2026-03-02T08:26:38+00:00",
+                  "views": 384,
+                  "forwards": 4,
+                  "replies": 9,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9583",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9583"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9582,
+                  "caption": "Dəstəyi qırsa, əla olar altcoinlər üçün",
+                  "date": "2026-03-02T07:47:38+00:00",
+                  "views": 330,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9582",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9582"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9581,
+                  "caption": "Bunun üçün də keçən dəfə dediyim keçərlidir. Ən yuxarı keçilmədiyi müddətcə rahatıq",
+                  "date": "2026-03-02T07:47:03+00:00",
+                  "views": 362,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9581",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9581"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9580,
+                  "caption": "Eyni",
+                  "date": "2026-03-02T07:46:30+00:00",
+                  "views": 373,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9580",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9580"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9579,
+                  "caption": "Sıxışmağa davam edirik",
+                  "date": "2026-03-02T07:46:16+00:00",
+                  "views": 373,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9579",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9579"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9578,
+                  "caption": "Düşünürəm kiiii, artıq seminarlar keçirməyin də zamanı gəlib sankii. Nə deyirsiz?\n\nHəm öyrənək, həm inkişaf edək🤔",
+                  "date": "2026-03-01T14:52:11+00:00",
+                  "views": 433,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 19,
+                  "message_link": "https://t.me/kriptoxeyal/9578",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9577,
+                  "caption": "Bu müqavimətləri necə çəkmişəmsə qıra bilmirik :(",
+                  "date": "2026-03-01T10:54:17+00:00",
+                  "views": 432,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9577",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9577"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9576,
+                  "caption": "Gözlədiyimiz kimi🤝",
+                  "date": "2026-02-28T20:22:24+00:00",
+                  "views": 447,
+                  "forwards": 1,
+                  "replies": 1,
+                  "reaction_total": 6,
+                  "message_link": "https://t.me/kriptoxeyal/9576",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9576"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9575,
+                  "caption": "",
+                  "date": "2026-02-28T19:38:51+00:00",
+                  "views": 408,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9575",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9574,
+                  "caption": "İrana qarşı hər mənfi hərəkətdə bazar yüksələcək",
+                  "date": "2026-02-28T13:59:43+00:00",
+                  "views": 435,
+                  "forwards": 1,
+                  "replies": 3,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9574",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9573,
+                  "caption": "İran müdafiə naziri öldürüldü.",
+                  "date": "2026-02-28T13:59:19+00:00",
+                  "views": 437,
+                  "forwards": 1,
+                  "replies": 2,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9573",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9572,
+                  "caption": "İsrail rəsmilərinin məlumatına görə, İran dini lideri Ayətullah Əli Xamneyiyə qarşı əməliyyat uğurlu olub və o öldürülüb. \n\nBildirilir ki, rəsmi məlumat davam edən saatlarda veriləcək.",
+                  "date": "2026-02-28T13:57:09+00:00",
+                  "views": 456,
+                  "forwards": 1,
+                  "replies": 3,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9572",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9571,
+                  "caption": "",
+                  "date": "2026-02-28T10:51:18+00:00",
+                  "views": 474,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9571",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9571"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9570,
+                  "caption": "Çünki biz tək kriptoda yox, ABŞ bazarında da varıq. Forexdə də varıq, qızıl gümüşdə də var. Hər yerdən pul qazanacağınız bir sistem demişdim sizə.\n\nAldığımız səhmlərdən sadəcə biri ziyandadır bu dəqiqə :)",
+                  "date": "2026-02-28T10:51:18+00:00",
+                  "views": 436,
+                  "forwards": 0,
+                  "replies": 3,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9570",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9570"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9569,
+                  "caption": "8.40 və 8.66 çox önəmlidir. Oralar da keçilsə, bi müddət kriptodan uzaq durun və forexə gəlin.",
+                  "date": "2026-02-28T10:49:08+00:00",
+                  "views": 378,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9569",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9569"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9568,
+                  "caption": "Admininiz beynəlxalq münasibətlər məzunudu. Ona görə işiniz bi tık daha rahatdı😁",
+                  "date": "2026-02-28T10:47:54+00:00",
+                  "views": 358,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9568",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9567,
+                  "caption": "ESFX VIP COMMUNITY üçün yenilənmələr davam edir. Ora giriş şərti sadəcə Bitget referansı ilə keçməkdir, bilirsiz. Qeydiyyatdan keçib KYC etməyiniz kifayətdir. Lakin orada əməliyyatlar aparmayıb sadəcə sırf qrupa girmək istəyənlərə pis xəbərim var, həcmlərə baxılır və treyd etməyənlər ya qrupdan atılır, ya da aylıq 100usdt ödəniş edəcəklər. Mən artıq hər şeyi sizə ödənişsiz etmək üçün əlimdən gələni edirəm, amma haqq yeməyək🙏\n\nO qrupda olanlara xüsusi kompaniyalar və bonuslar olacaq. Digər razılaşmalarımız, üstünlüklər hamısı orada paylaşılacaq. Heç nə etmədən belə pul qazanacağınız bir sistem yaratmağa çalışıram. Birjalar daxilindəki kompaniyaları ciddiyə almağınızı tövsiyə edirəm. Hər biri üçün ayrı ayrı məlumatlandırmalar olacaq. Qrupa qoşulmaq üçün @esfx_admin ilə əlaqə saxlayın🙌",
+                  "date": "2026-02-27T17:54:17+00:00",
+                  "views": 404,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 6,
+                  "message_link": "https://t.me/kriptoxeyal/9567",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9566,
+                  "caption": "ABŞ iranı vurmağa hazırlaşır. Bağdad səfirliyini təxliyə edirlər. Keçən dəfə bunu edəndən 2 gün sonra ABŞ İranı vurmuşdu.\n\nBu dəqiqə olmasa belə 1 həftə içərisində belə bir şey baş verə bilər. Ehtiyatlı olmaqda fayda var.",
+                  "date": "2026-02-27T16:35:23+00:00",
+                  "views": 363,
+                  "forwards": 0,
+                  "replies": 3,
+                  "reaction_total": 9,
+                  "message_link": "https://t.me/kriptoxeyal/9566",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9565,
+                  "caption": "USDT dominantlıq müqavimətdədir.",
+                  "date": "2026-02-27T14:00:34+00:00",
+                  "views": 414,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9565",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9565"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9564,
+                  "caption": "Eyni şey ETH-də də keçərlidir",
+                  "date": "2026-02-27T13:58:43+00:00",
+                  "views": 390,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9564",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9564"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9563,
+                  "caption": "Bu müqavimət qırılana qədər ehtiyatlı olmaq lazımdır",
+                  "date": "2026-02-27T13:57:58+00:00",
+                  "views": 377,
+                  "forwards": 0,
+                  "replies": 2,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9563",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9563"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9562,
+                  "caption": "Müqavimətdəyik",
+                  "date": "2026-02-26T09:25:41+00:00",
+                  "views": 411,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9562",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9562"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9561,
+                  "caption": "Copy-ə başlayacağımız botun nəticələri. Çox şükür artıq həll etdiyimizi düşünürəm. Gələn həftə başlayırıq inşallah❤️",
+                  "date": "2026-02-25T17:40:53+00:00",
+                  "views": 373,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 21,
+                  "message_link": "https://t.me/kriptoxeyal/9561",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9561"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9560,
+                  "caption": "Bu tamamdı. Keçsə əgər, 69-71-73k gələcək",
+                  "date": "2026-02-25T16:09:07+00:00",
+                  "views": 392,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9560",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9560"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9559,
+                  "caption": "",
+                  "date": "2026-02-25T15:22:47+00:00",
+                  "views": 307,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 11,
+                  "message_link": "https://t.me/kriptoxeyal/9559",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9558,
+                  "caption": "",
+                  "date": "2026-02-25T15:20:01+00:00",
+                  "views": 323,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 10,
+                  "message_link": "https://t.me/kriptoxeyal/9558",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9557,
+                  "caption": "",
+                  "date": "2026-02-25T15:18:43+00:00",
+                  "views": 331,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9557",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9557"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9556,
+                  "caption": "Birinin qayıtdığı, birinin gəldiyi yer🫶",
+                  "date": "2026-02-25T15:18:43+00:00",
+                  "views": 325,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9556",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9556"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9555,
+                  "caption": "Davam",
+                  "date": "2026-02-25T12:39:12+00:00",
+                  "views": 333,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9555",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9555"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9554,
+                  "caption": "Görəsən bunu verərmi",
+                  "date": "2026-02-24T18:12:32+00:00",
+                  "views": 366,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9554",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9554"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9553,
+                  "caption": "",
+                  "date": "2026-02-24T07:12:32+00:00",
+                  "views": 407,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9553",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9553"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9552,
+                  "caption": "Bu dəstəklər önəmlidir",
+                  "date": "2026-02-24T07:12:32+00:00",
+                  "views": 416,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9552",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9552"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9551,
+                  "caption": "Sabahlar xeyir. Gözlədiyimizi elədi təəssüf ki",
+                  "date": "2026-02-24T07:11:42+00:00",
+                  "views": 405,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9551",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9551"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9550,
+                  "caption": "Amma bilmədiyimiz hərəkətlər deyil də",
+                  "date": "2026-02-23T15:38:38+00:00",
+                  "views": 399,
+                  "forwards": 0,
+                  "replies": 2,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9550",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9550"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9549,
+                  "caption": "Mən yenə uçuram. Bazarda dəyişiklik yoxdu",
+                  "date": "2026-02-23T15:37:59+00:00",
+                  "views": 378,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9549",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9549"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9548,
+                  "caption": "Mən yenə bu gün uçuşlardayam. Bazardan ehtiyatlı olun. Çox da dəyişiklik yoxdu, düşsək belə.",
+                  "date": "2026-02-23T09:21:01+00:00",
+                  "views": 405,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9548",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9548"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9547,
+                  "caption": "💙",
+                  "date": "2026-02-22T20:04:33+00:00",
+                  "views": 434,
+                  "forwards": 0,
+                  "replies": 4,
+                  "reaction_total": 11,
+                  "message_link": "https://t.me/kriptoxeyal/9547",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9547"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9546,
+                  "caption": "Sabahınız xeyir🙏\n\nBu gün saat 3-də burdayıq.",
+                  "date": "2026-02-22T06:52:22+00:00",
+                  "views": 435,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9546",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9545,
+                  "caption": "Həftəsonudu deyə səsimi çıxarmaq istəmirəm, amma bu bazar adamı çox yorure",
+                  "date": "2026-02-21T11:29:09+00:00",
+                  "views": 473,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9545",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9544,
+                  "caption": "Məsələ burasındadır ki, Bitcoin dominantlıq da diaqonalı qırdı, amma üfüqi müqavimətdə ilişdi. Ümid edirik, ordan rədd yeyər. Əks halda Bitcoinə bağlı bir hərəkət görəcəyik.",
+                  "date": "2026-02-20T09:50:43+00:00",
+                  "views": 574,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 10,
+                  "message_link": "https://t.me/kriptoxeyal/9544",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9544"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9543,
+                  "caption": "Ümid edirəm bu, diaqonalın retesti deyil. Onun da aşağı keçməsi lazımdı ki, rahatlayaq",
+                  "date": "2026-02-20T09:49:31+00:00",
+                  "views": 461,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 6,
+                  "message_link": "https://t.me/kriptoxeyal/9543",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9543"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9542,
+                  "caption": "Bu da gəlsin 2100lərə",
+                  "date": "2026-02-20T09:48:37+00:00",
+                  "views": 441,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 6,
+                  "message_link": "https://t.me/kriptoxeyal/9542",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9542"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9541,
+                  "caption": "Bu səfər 73k-nı görək haydi🙏",
+                  "date": "2026-02-20T09:47:29+00:00",
+                  "views": 392,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9541",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9541"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9540,
+                  "caption": "Salamlar\nÇox yorulduq artıq biz buralarda..",
+                  "date": "2026-02-20T06:26:44+00:00",
+                  "views": 382,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9540",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9540"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9539,
+                  "caption": "4 gün sonra burdayıq, unutmayın. Qeydiyyatdan keçməyə tələsinn",
+                  "date": "2026-02-18T13:45:36+00:00",
+                  "views": 489,
+                  "forwards": 0,
+                  "replies": 2,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9539",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9538,
+                  "caption": "Dominantlığın yüksəlişi altcoinlərin xətrinə dəyə bilər. Ona görə nazları ilə oynamamaqda fayda var",
+                  "date": "2026-02-18T10:39:04+00:00",
+                  "views": 510,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9538",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9538"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9537,
+                  "caption": "Kış kış cinler kış kış",
+                  "date": "2026-02-18T08:06:28+00:00",
+                  "views": 486,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9537",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9537"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9536,
+                  "caption": "Gel sana aşığım geeell",
+                  "date": "2026-02-18T08:02:42+00:00",
+                  "views": 437,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9536",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9536"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9535,
+                  "caption": "Gel gel sarışınım gell",
+                  "date": "2026-02-18T08:02:23+00:00",
+                  "views": 386,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9535",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9535"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9534,
+                  "caption": "Artıq öyrəşdiribləre hər kiçik yüksəlişdən sonra düşüşə",
+                  "date": "2026-02-17T14:51:37+00:00",
+                  "views": 416,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9534",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9534"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9533,
+                  "caption": "312$ aşağıdakı şəkilin qazancıdır bu ay üçün\n103$ isə yuxarıdakı şəkilin qazancıdır.\n\nÜmumilikdə hər ikisi 1k üçün hesablanmışdır.\nYəni nəticə etibarilə 415$ qazanc var, bu da 2k balansa görə 20%-dən artıq edir. Və biz heç nə etmirik. Hamısını bot edəcək🙌",
+                  "date": "2026-02-17T12:12:37+00:00",
+                  "views": 418,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9533",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9533"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9532,
+                  "caption": "",
+                  "date": "2026-02-17T12:12:37+00:00",
+                  "views": 358,
+                  "forwards": 0,
+                  "replies": 2,
+                  "reaction_total": 9,
+                  "message_link": "https://t.me/kriptoxeyal/9532",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9532"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9531,
+                  "caption": "",
+                  "date": "2026-02-17T12:04:38+00:00",
+                  "views": 366,
+                  "forwards": 2,
+                  "replies": 0,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9531",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9530,
+                  "caption": "",
+                  "date": "2026-02-17T12:03:28+00:00",
+                  "views": 357,
+                  "forwards": 3,
+                  "replies": 0,
+                  "reaction_total": 3,
+                  "message_link": "https://t.me/kriptoxeyal/9530",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9529,
+                  "caption": "🌛 Bitget Azərbaycan Topluluğunun Ramazana Özəl Səmimi Görüşü\n\n📝 https://luma.com/7x13thxb\n\nRamazan ayının birlik və paylaşma ruhunu Bitget icması ilə birlikdə yaşamağa dəvətlisən.\nBitget platformasını daha yaxından tanımaq, treydinq dünyasına ilk addımlarını atmaq və yerli treyder icması ilə real əlaqələr qurmaq istəyirsənsə, bu xüsusi Ramazan görüşü məhz sənin üçündür.\n\nBakıda təşkil olunan bu tədbirdə kripto və treydinq mövzusunda praktik biliklər, real bazar təcrübələri və interaktiv müzakirələr səni gözləyir.\n\n✨ Tədbir saat 15:00-da başlayacaq.\n🌛 İftar saat 18:31-də birlikdə açılacaq.\nBütün iştirakçılar iftarını tədbir çərçivəsində açacaq və xüsusi təşkil olunmuş süfrə ilə birlikdə səmimi mühitdə axşamı davam etdirəcəyik.\n\n🎉 Tədbir boyunca mükafatlı yarışlar keçiriləcək və iştirakçılara müxtəlif Bitget hədiyyələri təqdim olunacaq.🎁\n\n⚠️ Yerlərin sayı məhduddur — erkən qeydiyyatdan keçənlər üstünlük qazanacaq.\n\n🗓 22 Fevral 2026\n⏰ 15:00 (Bakı vaxtı)\n\n📍 East Town Restaurant, C54 Nizami St, Baku\n\nOrda olacam, görüşərik 🙌",
+                  "date": "2026-02-17T06:49:12+00:00",
+                  "views": 416,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9529",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9529"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9528,
+                  "caption": "Davam",
+                  "date": "2026-02-17T06:20:22+00:00",
+                  "views": 399,
+                  "forwards": 0,
+                  "replies": 3,
+                  "reaction_total": 2,
+                  "message_link": "https://t.me/kriptoxeyal/9528",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9528"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9527,
+                  "caption": "",
+                  "date": "2026-02-16T13:13:31+00:00",
+                  "views": 377,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9527",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9527"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9526,
+                  "caption": "Dibdə alana oxşayırıq, gəlin hədəfə, haydi",
+                  "date": "2026-02-16T13:13:31+00:00",
+                  "views": 381,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9526",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9526"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9525,
+                  "caption": "Gəlirlər🙌",
+                  "date": "2026-02-16T13:11:34+00:00",
+                  "views": 347,
+                  "forwards": 0,
+                  "replies": 1,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9525",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9524,
+                  "caption": "Sən də yüksəl. Hətta bu ikisini aln, müqavimətlərdə satarsız",
+                  "date": "2026-02-16T08:53:41+00:00",
+                  "views": 395,
+                  "forwards": 1,
+                  "replies": 2,
+                  "reaction_total": 6,
+                  "message_link": "https://t.me/kriptoxeyal/9524",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9524"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9523,
+                  "caption": "Sən də dəstəkdəsən yüksəl",
+                  "date": "2026-02-16T08:52:48+00:00",
+                  "views": 413,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9523",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9523"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9522,
+                  "caption": "Hələ yolun var sənin düş",
+                  "date": "2026-02-16T08:52:06+00:00",
+                  "views": 397,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 5,
+                  "message_link": "https://t.me/kriptoxeyal/9522",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9522"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9521,
+                  "caption": "Biz VIP tərəfdə təkcə TRADFI-dən bir gündə 10.3% qazandıq.\n\nÖzü də giriş pulsuzdu. Nəyi gözləyirsiz? 🤝\n\nQeydiyyatdan keç, KYC et və @esfx_admin hesabına uid göndər. Qoşul🙌\n\nhttps://partner.bitget.fit/bg/37UJQS",
+                  "date": "2026-02-15T09:37:52+00:00",
+                  "views": 421,
+                  "forwards": 2,
+                  "replies": 0,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9521",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9521"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9520,
+                  "caption": "Demişdim axı, gələcək🤝",
+                  "date": "2026-02-15T07:39:17+00:00",
+                  "views": 392,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 10,
+                  "message_link": "https://t.me/kriptoxeyal/9520",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9520"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9519,
+                  "caption": "Birinci hədəf gəldi, xeyir götür girişə stop qoy🤝",
+                  "date": "2026-02-14T11:53:32+00:00",
+                  "views": 390,
+                  "forwards": 0,
+                  "replies": 3,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9519",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9519"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9518,
+                  "caption": "Dünən nə demişdik?\n\nDAVAMMM",
+                  "date": "2026-02-14T08:48:37+00:00",
+                  "views": 421,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 7,
+                  "message_link": "https://t.me/kriptoxeyal/9518",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9518"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9517,
+                  "caption": "Nələr görürükk💙",
+                  "date": "2026-02-13T18:35:57+00:00",
+                  "views": 430,
+                  "forwards": 1,
+                  "replies": 2,
+                  "reaction_total": 18,
+                  "message_link": "https://t.me/kriptoxeyal/9517",
+                  "image_links": [],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9516,
+                  "caption": "RSI pozitiv uyğunsuzluq verdi. Görək nə edəcək, davamm",
+                  "date": "2026-02-13T13:40:58+00:00",
+                  "views": 442,
+                  "forwards": 0,
+                  "replies": 4,
+                  "reaction_total": 6,
+                  "message_link": "https://t.me/kriptoxeyal/9516",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9516"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9515,
+                  "caption": "Haydi sən də yüksəl bəsdi.\n\nHətta hamıya açıq pozisya verim, burdan alaq, mərhələli şəkildə 2100-2350-2600 TP olsun🤝",
+                  "date": "2026-02-13T10:41:42+00:00",
+                  "views": 460,
+                  "forwards": 0,
+                  "replies": 2,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9515",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9515"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9514,
+                  "caption": "Aşağı davammm",
+                  "date": "2026-02-13T10:40:36+00:00",
+                  "views": 360,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9514",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9514"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9513,
+                  "caption": "Yuxarı davammm",
+                  "date": "2026-02-13T10:38:16+00:00",
+                  "views": 384,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9513",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9513"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9511,
+                  "caption": "Və hazırdır!\nRİSK və RİSK+ otaqları artıq qazanc verməyə başladı. Hər ikisinə manual girmək çətin olduğu üçün buna copy açılacaq və bütün giriş-çıxışlar botla olacaq. Gecə yatanda da pul qazanacağıq inşallah🙏\n\n12 gün ərzində \nRİSK +119$\nRİSK+ +416$\n\nBu isə 2k dollar büdcədə 25% qazanc deməkdir. Hər copy-ə 1000$ atılacaq. Və özü trade edəcək.\n\nBir digər xəbər isə 2 gündə VIP Community tərəfdə qazancımız 43.94$, yəni 1000$ balansa 4% olub. Tək bir otaqdan olan qazancdır bu. TRADFI hissəsində.\n\nVə qoşulmağın tək şərti sadəcə və sadəcə bitget referalından keçməkdir. Nə aylıq ödəniş, nə də faiz!\n\nBundan daha artıq nə edə bilərəm sizin üçün ? :)",
+                  "date": "2026-02-12T09:16:51+00:00",
+                  "views": 392,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 0,
+                  "message_link": "https://t.me/kriptoxeyal/9511",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9511"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9510,
+                  "caption": "",
+                  "date": "2026-02-12T09:16:51+00:00",
+                  "views": 437,
+                  "forwards": 0,
+                  "replies": 0,
+                  "reaction_total": 9,
+                  "message_link": "https://t.me/kriptoxeyal/9510",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9510"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9509,
+                  "caption": "Bitcoin dominantlıq da dəstəyini qırır, bu da altcoinlər üçün yaxşı xəbərdir.",
+                  "date": "2026-02-12T08:57:21+00:00",
+                  "views": 458,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9509",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9509"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9508,
+                  "caption": "Yorur amma düşəcək",
+                  "date": "2026-02-12T08:56:31+00:00",
+                  "views": 433,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 4,
+                  "message_link": "https://t.me/kriptoxeyal/9508",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9508"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9507,
+                  "caption": "Öhöm öhöm\n\nHaydi bir az da🙏",
+                  "date": "2026-02-11T14:10:47+00:00",
+                  "views": 482,
+                  "forwards": 1,
+                  "replies": 0,
+                  "reaction_total": 8,
+                  "message_link": "https://t.me/kriptoxeyal/9507",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9507"
+                  ],
+                  "local_media_path": null
+                },
+                {
+                  "channel": "kriptoxeyal",
+                  "message_id": 9506,
+                  "caption": "Bu müqavimət bizim üçün işləsə Bitcoin istədiyimizi verəcək. Olmasa bir yuxarıda müqavimətimiz var",
+                  "date": "2026-02-11T10:08:46+00:00",
+                  "views": 425,
+                  "forwards": 0,
+                  "replies": 2,
+                  "reaction_total": 9,
+                  "message_link": "https://t.me/kriptoxeyal/9506",
+                  "image_links": [
+                    "https://t.me/kriptoxeyal/9506"
+                  ],
+                  "local_media_path": null
+                }
+              ]
+            }
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f228696b-ff2c-444f-9b85-9c016a6c2a4f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f5fb4061ed08960c69361f3ac140c4b4a1277c94431dab6c42e4e1cf6a2153b5"
+  },
+  "id": "lY8rLV2f0GAJukGV",
+  "tags": []
+}
